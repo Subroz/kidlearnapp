@@ -1,0 +1,61 @@
+{
+  "categories": [
+    {
+      "id": "animals",
+      "nameEn": "Animals",
+      "nameBn": "পশুপাখি",
+      "words": [
+        {"wordEn": "Lion", "wordBn": "সিংহ"},
+        {"wordEn": "Rabbit", "wordBn": "খরগোশ"},
+        {"wordEn": "Elephant", "wordBn": "হাতি"},
+        {"wordEn": "Bird", "wordBn": "পাখি"},
+        {"wordEn": "Fish", "wordBn": "মাছ"},
+        {"wordEn": "Butterfly", "wordBn": "প্রজাপতি"}
+      ]
+    },
+    {
+      "id": "objects",
+      "nameEn": "Objects",
+      "nameBn": "জিনিসপত্র",
+      "words": [
+        {"wordEn": "Book", "wordBn": "বই"},
+        {"wordEn": "Ball", "wordBn": "বল"},
+        {"wordEn": "Star", "wordBn": "তারা"},
+        {"wordEn": "Flower", "wordBn": "ফুল"}
+      ]
+    },
+    {
+      "id": "actions",
+      "nameEn": "Actions",
+      "nameBn": "কাজ",
+      "words": [
+        {"wordEn": "Run", "wordBn": "দৌড়ানো"},
+        {"wordEn": "Jump", "wordBn": "লাফানো"},
+        {"wordEn": "Fly", "wordBn": "উড়া"},
+        {"wordEn": "Sing", "wordBn": "গান গাওয়া"}
+      ]
+    },
+    {
+      "id": "places",
+      "nameEn": "Places",
+      "nameBn": "জায়গা",
+      "words": [
+        {"wordEn": "Forest", "wordBn": "বন"},
+        {"wordEn": "Garden", "wordBn": "বাগান"},
+        {"wordEn": "School", "wordBn": "স্কুল"},
+        {"wordEn": "River", "wordBn": "নদী"}
+      ]
+    },
+    {
+      "id": "feelings",
+      "nameEn": "Feelings",
+      "nameBn": "অনুভূতি",
+      "words": [
+        {"wordEn": "Happy", "wordBn": "খুশি"},
+        {"wordEn": "Brave", "wordBn": "সাহসী"},
+        {"wordEn": "Kind", "wordBn": "দয়ালু"},
+        {"wordEn": "Curious", "wordBn": "কৌতূহলী"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "letters": [
+    {
+      "id": "A",
+      "letter": "A",
+      "pronunciation": "ei",
+      "type": "vowel",
+      "examples": [
+        {"word": "Apple", "meaning": "A round fruit"},
+        {"word": "Ant", "meaning": "A small insect"},
+        {"word": "Airplane", "meaning": "A flying vehicle"}
+      ]
+    },
+    {
+      "id": "B",
+      "letter": "B",
+      "pronunciation": "bee",
+      "type": "consonant",
+      "examples": [
+        {"word": "Ball", "meaning": "A round toy"},
+        {"word": "Bird", "meaning": "A flying animal"},
+        {"word": "Banana", "meaning": "A yellow fruit"}
+      ]
+    },
+    {
+      "id": "C",
+      "letter": "C",
+      "pronunciation": "see",
+      "type": "consonant",
+      "examples": [
+        {"word": "Cat", "meaning": "A pet animal"},
+        {"word": "Car", "meaning": "A vehicle"},
+        {"word": "Cake", "meaning": "A sweet food"}
+      ]
+    }
+  ]
+}

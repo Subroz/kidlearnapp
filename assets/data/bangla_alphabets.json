@@ -1,0 +1,46 @@
+{
+  "swarabarna": [
+    {
+      "id": "অ",
+      "letter": "অ",
+      "pronunciation": "o",
+      "type": "vowel",
+      "examples": [
+        {"word": "অজগর", "meaning": "Python"},
+        {"word": "অনেক", "meaning": "Many"}
+      ]
+    },
+    {
+      "id": "আ",
+      "letter": "আ",
+      "pronunciation": "aa",
+      "type": "vowel",
+      "examples": [
+        {"word": "আম", "meaning": "Mango"},
+        {"word": "আকাশ", "meaning": "Sky"}
+      ]
+    }
+  ],
+  "byanjanbarna": [
+    {
+      "id": "ক",
+      "letter": "ক",
+      "pronunciation": "ko",
+      "type": "consonant",
+      "examples": [
+        {"word": "কলম", "meaning": "Pen"},
+        {"word": "কাক", "meaning": "Crow"}
+      ]
+    },
+    {
+      "id": "খ",
+      "letter": "খ",
+      "pronunciation": "kho",
+      "type": "consonant",
+      "examples": [
+        {"word": "খরগোশ", "meaning": "Rabbit"},
+        {"word": "খাবার", "meaning": "Food"}
+      ]
+    }
+  ]
+}
