@@ -78,10 +78,25 @@ A beautiful, interactive kids learning app built with Flutter. Features bilingua
    ```
 
 3. **Run the app**
-   
-   ```bash
-   flutter run
-   ```
+
+  ### 📱 Android
+
+#### Using Emulator
+
+```bash
+# List available emulators
+flutter emulators
+```
+
+```bash
+# Launch an emulator
+flutter emulators --launch <emulator_id>
+```
+
+```bash
+# Run the app
+flutter run
+```
 
 ### Build for Production
 
