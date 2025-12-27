@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class SpeechService {
   static final SpeechService _instance = SpeechService._internal();
@@ -7,19 +8,24 @@ class SpeechService {
   SpeechService._internal();
 
   final FlutterTts _tts = FlutterTts();
+  final stt.SpeechToText _speech = stt.SpeechToText();
   bool _isInitialized = false;
   bool _isSpeaking = false;
+  bool _isSpeechInitialized = false;
+  bool _isListening = false;
   Completer<void>? _speakCompleter;
 
   bool get isSpeaking => _isSpeaking;
+  bool get isListening => _isListening;
+  bool get isSpeechAvailable => _isSpeechInitialized;
 
   Future<void> initialize() async {
     if (_isInitialized) return;
-    
+
     await _tts.setVolume(1.0);
     await _tts.setSpeechRate(0.4);
     await _tts.setPitch(1.1);
-    
+
     _tts.setCompletionHandler(() {
       _isSpeaking = false;
       _speakCompleter?.complete();
@@ -37,7 +43,7 @@ class SpeechService {
       _speakCompleter?.complete();
       _speakCompleter = null;
     });
-    
+
     _isInitialized = true;
   }
 
@@ -45,7 +51,8 @@ class SpeechService {
     await initialize();
     await _tts.setLanguage('en-US');
     await _tts.setSpeechRate(0.4);
-    await _tts.setPitch(1.1);
+    await _tts.setPitch(1.2);
+    await _tts.setVolume(1.0);
     await _tts.speak(text);
   }
 
@@ -53,7 +60,8 @@ class SpeechService {
     await initialize();
     await _tts.setLanguage('bn-BD');
     await _tts.setSpeechRate(0.35);
-    await _tts.setPitch(1.0);
+    await _tts.setPitch(1.2);
+    await _tts.setVolume(1.0);
     await _tts.speak(text);
   }
 
@@ -91,7 +99,7 @@ class SpeechService {
       await _tts.setSpeechRate(0.35);
     }
     await _tts.setPitch(1.0);
-    
+
     _speakCompleter = Completer<void>();
     _isSpeaking = true;
     await _tts.speak(story);
@@ -102,9 +110,10 @@ class SpeechService {
     final encouragements = isBangla
         ? ['অসাধারণ!', 'খুব ভালো!', 'দারুণ করেছ!', 'চালিয়ে যাও!']
         : ['Great job!', 'Excellent!', 'You\'re amazing!', 'Keep it up!'];
-    
-    final random = encouragements[DateTime.now().millisecond % encouragements.length];
-    
+
+    final random =
+        encouragements[DateTime.now().millisecond % encouragements.length];
+
     if (isBangla) {
       await speakBangla(random);
     } else {
@@ -134,5 +143,90 @@ class SpeechService {
       10: 'দশ',
     };
     return words[number] ?? number.toString();
+  }
+
+  // Speech Recognition Methods
+  Future<bool> initializeSpeechRecognition() async {
+    if (_isSpeechInitialized) return true;
+    _isSpeechInitialized = await _speech.initialize(
+      onError: (error) {
+        _isListening = false;
+      },
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          _isListening = false;
+        }
+      },
+    );
+    return _isSpeechInitialized;
+  }
+
+  Future<void> startListening({
+    required Function(String) onResult,
+    required bool isBangla,
+    Duration? listenFor,
+    Duration? pauseFor,
+  }) async {
+    if (!_isSpeechInitialized) {
+      final initialized = await initializeSpeechRecognition();
+      if (!initialized) return;
+    }
+
+    if (_isListening) {
+      await stopListening();
+    }
+
+    _isListening = true;
+    await _speech.listen(
+      onResult: (result) {
+        onResult(result.recognizedWords);
+      },
+      localeId: isBangla ? 'bn_BD' : 'en_US',
+      listenFor: listenFor ?? const Duration(seconds: 10),
+      pauseFor: pauseFor ?? const Duration(seconds: 3),
+      listenOptions: stt.SpeechListenOptions(
+        cancelOnError: true,
+        listenMode: stt.ListenMode.confirmation,
+      ),
+    );
+  }
+
+  Future<void> stopListening() async {
+    _isListening = false;
+    await _speech.stop();
+  }
+
+  bool checkWordMatch(String spoken, String target) {
+    final spokenLower = spoken.toLowerCase().trim();
+    final targetLower = target.toLowerCase().trim();
+    
+    // Exact match
+    if (spokenLower == targetLower) return true;
+    
+    // Check if spoken contains target or target contains spoken
+    if (spokenLower.contains(targetLower) || targetLower.contains(spokenLower)) {
+      return true;
+    }
+    
+    // Calculate similarity (simple Levenshtein-like check)
+    final similarity = _calculateSimilarity(spokenLower, targetLower);
+    return similarity >= 0.7; // 70% match threshold
+  }
+
+  double _calculateSimilarity(String s1, String s2) {
+    if (s1.isEmpty || s2.isEmpty) return 0.0;
+    if (s1 == s2) return 1.0;
+    
+    final longer = s1.length > s2.length ? s1 : s2;
+    final shorter = s1.length > s2.length ? s2 : s1;
+    
+    int matches = 0;
+    for (int i = 0; i < shorter.length; i++) {
+      if (i < longer.length && shorter[i] == longer[i]) {
+        matches++;
+      }
+    }
+    
+    return matches / longer.length;
   }
 }

@@ -1,5 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+
+void _log(String message) {
+  if (kDebugMode) {
+    print(message);
+  }
+}
 
 class StoryRequest {
   final List<String> words;
@@ -38,14 +46,34 @@ class StoryResponse {
 }
 
 class GeminiService {
-  static const String _apiKey = String.fromEnvironment('GEMINI_API_KEY');
-  
+  static String _apiKey = '';
+  static bool _initialized = false;
+
   GenerativeModel? _model;
+
+  /// Initialize the service by loading the API key from env.json
+  /// Call this once at app startup before using GeminiService
+  static Future<void> init() async {
+    if (_initialized) return;
+
+    try {
+      final jsonString = await rootBundle.loadString('assets/env.json');
+      final config = jsonDecode(jsonString) as Map<String, dynamic>;
+      _apiKey = config['GEMINI_API_KEY'] ?? '';
+      _initialized = true;
+      _log('GeminiService: Initialized, API key loaded: ${_apiKey.isNotEmpty}');
+    } catch (e) {
+      // If env.json doesn't exist or can't be parsed, continue without API key
+      _apiKey = '';
+      _initialized = true;
+      _log('GeminiService: Failed to load API key: $e');
+    }
+  }
 
   GeminiService() {
     if (_apiKey.isNotEmpty) {
       _model = GenerativeModel(
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash-lite',
         apiKey: _apiKey,
       );
     }
@@ -54,49 +82,61 @@ class GeminiService {
   bool get isConfigured => _apiKey.isNotEmpty && _model != null;
 
   Future<StoryResponse> generateStory(StoryRequest request) async {
+    _log(
+        'GeminiService: isConfigured = $isConfigured, apiKey empty = ${_apiKey.isEmpty}');
+
     if (!isConfigured) {
+      _log('GeminiService: Not configured, using fallback story');
       return _getFallbackStory(request);
     }
 
     try {
+      _log('GeminiService: Generating story with AI...');
       final prompt = _buildPrompt(request);
       final content = [Content.text(prompt)];
       final response = await _model!.generateContent(content);
-      
+
+      _log('GeminiService: Got response from Gemini');
+
       if (response.text == null || response.text!.isEmpty) {
+        _log('GeminiService: Empty response, using fallback');
         return _getFallbackStory(request);
       }
 
       // Try to parse JSON response
       try {
         String jsonString = response.text!;
-        
+        _log('GeminiService: Parsing response...');
+
         // Clean up potential markdown code blocks
         if (jsonString.contains('```json')) {
           jsonString = jsonString.split('```json')[1].split('```')[0];
         } else if (jsonString.contains('```')) {
           jsonString = jsonString.split('```')[1].split('```')[0];
         }
-        
+
         final json = jsonDecode(jsonString.trim());
+        _log('GeminiService: Story generated successfully with AI!');
         return StoryResponse.fromJson(json);
       } catch (e) {
+        _log('GeminiService: JSON parse error: $e');
         // If JSON parsing fails, create a basic response
         return StoryResponse(
           title: request.isBangla ? 'একটি সুন্দর গল্প' : 'A Beautiful Story',
           content: response.text!,
-          moral: request.isBangla 
+          moral: request.isBangla
               ? 'ভালো কাজ করলে ভালো ফল পাওয়া যায়'
               : 'Good deeds bring good results',
           vocabulary: request.words,
           questions: [
-            request.isBangla 
+            request.isBangla
                 ? 'গল্পটা তোমার কেমন লাগলো?'
                 : 'How did you like the story?'
           ],
         );
       }
     } catch (e) {
+      _log('GeminiService: Error generating story: $e');
       return _getFallbackStory(request);
     }
   }
@@ -104,7 +144,7 @@ class GeminiService {
   String _buildPrompt(StoryRequest request) {
     final words = request.words.join(', ');
     final language = request.isBangla ? 'Bangla' : 'English';
-    
+
     return '''
 Generate a short, engaging children's story in $language using these words: $words
 

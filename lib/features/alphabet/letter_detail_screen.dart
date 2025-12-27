@@ -170,8 +170,14 @@ class LetterDetailScreen extends ConsumerWidget {
                     text: appLanguage == AppLanguage.bangla
                         ? 'উচ্চারণ শুনুন'
                         : 'Listen',
-                    onPressed: () =>
-                        speechService.speakLetter(letter.letter, isBangla: isBangla),
+                    onPressed: () {
+                      // Use pronunciation string for better clarity
+                      if (isBangla) {
+                        speechService.speakBangla(letter.pronunciation);
+                      } else {
+                        speechService.speakEnglish(letter.pronunciation);
+                      }
+                    },
                     size: KidButtonSize.large,
                     backgroundColor: color,
                   ),

@@ -131,7 +131,7 @@ class _EnglishAlphabetScreenState extends ConsumerState<EnglishAlphabetScreen> {
                     final letter = letters[index];
                     return _LetterCard(
                       letter: letter,
-                      onSpeak: () => _speechService.speakLetter(letter.letter),
+                      onSpeak: () => _speechService.speakEnglish(letter.pronunciation),
                       onTap: () => context.push(
                         '/alphabet/letter/english/${letter.id}',
                       ),
@@ -195,7 +195,7 @@ class _EnglishAlphabetScreenState extends ConsumerState<EnglishAlphabetScreen> {
                       icon: Icons.volume_up_rounded,
                       text: language == AppLanguage.bangla ? 'শুনুন' : 'Listen',
                       onPressed: () =>
-                          _speechService.speakLetter(letters[_currentIndex].letter),
+                          _speechService.speakEnglish(letters[_currentIndex].pronunciation),
                       backgroundColor: AppTheme.primaryBlue,
                     ),
                     const Spacer(),

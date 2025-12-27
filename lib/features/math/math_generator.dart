@@ -37,6 +37,17 @@ class MathGenerator {
         answer = _random.nextInt(10) + 1;
         operand1 = operand2 * answer;
         break;
+
+      case MathOperation.numbersBangla:
+      case MathOperation.numbersEnglish:
+      case MathOperation.multiplicationTable:
+      case MathOperation.mathPractice:
+        // These operations don't use this generator
+        // Return a default problem
+        operand1 = 1;
+        operand2 = 1;
+        answer = 2;
+        break;
     }
 
     final options = _generateOptions(answer, operation);

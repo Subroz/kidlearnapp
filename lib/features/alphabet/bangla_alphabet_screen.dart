@@ -149,7 +149,7 @@ class _BanglaAlphabetScreenState extends ConsumerState<BanglaAlphabetScreen> {
                     return _LetterCard(
                       letter: letter,
                       onSpeak: () =>
-                          _speechService.speakLetter(letter.letter, isBangla: true),
+                          _speechService.speakBangla(letter.pronunciation),
                       onTap: () => context.push(
                         '/alphabet/letter/bangla/${letter.id}',
                       ),
@@ -212,9 +212,8 @@ class _BanglaAlphabetScreenState extends ConsumerState<BanglaAlphabetScreen> {
                     KidButton(
                       icon: Icons.volume_up_rounded,
                       text: language == AppLanguage.bangla ? 'শুনুন' : 'Listen',
-                      onPressed: () => _speechService.speakLetter(
-                        letters[_currentIndex].letter,
-                        isBangla: true,
+                      onPressed: () => _speechService.speakBangla(
+                        letters[_currentIndex].pronunciation,
                       ),
                       backgroundColor: AppTheme.primaryGreen,
                     ),

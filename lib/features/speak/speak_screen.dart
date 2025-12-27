@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/screen_background.dart';
 import '../../core/i18n/language_controller.dart';
@@ -18,6 +19,10 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
   String _selectedCategory = 'animals';
   String? _selectedWord;
   bool _isRecording = false;
+  bool _speechInitialized = false;
+  String _recognizedText = '';
+  String? _feedbackMessage;
+  bool? _lastMatchResult;
   final SpeechService _speechService = SpeechService();
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -91,25 +96,144 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
+    _initSpeechRecognition();
+  }
+
+  Future<void> _initSpeechRecognition() async {
+    _speechInitialized = await _speechService.initializeSpeechRecognition();
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
     _pulseController.dispose();
+    _speechService.stopListening();
     super.dispose();
   }
 
-  void _toggleRecording() {
-    setState(() {
-      _isRecording = !_isRecording;
-      if (_isRecording) {
-        _pulseController.repeat(reverse: true);
-        Haptics.medium();
-      } else {
+  Future<void> _toggleRecording() async {
+    final language = ref.read(languageProvider);
+    final isBangla = language == AppLanguage.bangla;
+
+    if (_isRecording) {
+      // Stop recording
+      await _speechService.stopListening();
+      setState(() {
+        _isRecording = false;
         _pulseController.stop();
         _pulseController.reset();
+      });
+    } else {
+      // Check if a word is selected
+      if (_selectedWord == null) {
+        setState(() {
+          _feedbackMessage = isBangla 
+              ? 'প্রথমে একটি শব্দ নির্বাচন করো!' 
+              : 'Please select a word first!';
+          _lastMatchResult = null;
+        });
+        return;
       }
-    });
+
+      // Check if speech recognition is available
+      if (!_speechInitialized) {
+        setState(() {
+          _feedbackMessage = isBangla 
+              ? 'স্পিচ রিকগনিশন উপলব্ধ নয়' 
+              : 'Speech recognition not available';
+          _lastMatchResult = null;
+        });
+        return;
+      }
+
+      // Start recording
+      setState(() {
+        _isRecording = true;
+        _recognizedText = '';
+        _feedbackMessage = null;
+        _lastMatchResult = null;
+        _pulseController.repeat(reverse: true);
+      });
+      Haptics.medium();
+
+      await _speechService.startListening(
+        onResult: (text) async {
+          setState(() {
+            _recognizedText = text;
+          });
+          
+          // Check if the recognized text matches the selected word
+          if (text.isNotEmpty && _selectedWord != null) {
+            final isMatch = _speechService.checkWordMatch(text, _selectedWord!);
+            setState(() {
+              _lastMatchResult = isMatch;
+              if (isMatch) {
+                _feedbackMessage = isBangla ? 'অসাধারণ! 🎉' : 'Great job! 🎉';
+                Haptics.success();
+              } else {
+                _feedbackMessage = isBangla 
+                    ? 'আবার চেষ্টা করো! তুমি বললে: "$text"' 
+                    : 'Try again! You said: "$text"';
+              }
+            });
+            
+            // Stop listening and provide voice feedback
+            await _speechService.stopListening();
+            setState(() {
+              _isRecording = false;
+              _pulseController.stop();
+              _pulseController.reset();
+            });
+            
+            // Give voice feedback after a short delay
+            await Future.delayed(const Duration(milliseconds: 300));
+            if (isMatch) {
+              await _speechService.speakEncouragement(isBangla: isBangla);
+            } else {
+              // Say "Try again" and then the correct word
+              if (isBangla) {
+                await _speechService.speakBangla('আবার চেষ্টা করো');
+              } else {
+                await _speechService.speakEnglish('Try again');
+              }
+              await Future.delayed(const Duration(milliseconds: 500));
+              // Speak the correct word
+              await _speechService.speakWord(_selectedWord!, isBangla: isBangla);
+            }
+          }
+        },
+        isBangla: isBangla,
+        listenFor: const Duration(seconds: 5),
+        pauseFor: const Duration(seconds: 2),
+      );
+
+      // Auto-stop after listening period if still recording
+      Future.delayed(const Duration(seconds: 6), () async {
+        if (mounted && _isRecording) {
+          await _speechService.stopListening();
+          setState(() {
+            _isRecording = false;
+            _pulseController.stop();
+            _pulseController.reset();
+            if (_recognizedText.isEmpty) {
+              _feedbackMessage = isBangla 
+                  ? 'কিছু শুনতে পাইনি। আবার চেষ্টা করো!' 
+                  : "I didn't hear anything. Try again!";
+              _lastMatchResult = null;
+            }
+          });
+          
+          // Speak feedback if nothing was heard
+          if (_recognizedText.isEmpty) {
+            if (isBangla) {
+              await _speechService.speakBangla('আবার চেষ্টা করো');
+            } else {
+              await _speechService.speakEnglish("Let's try again");
+            }
+          }
+        }
+      });
+    }
   }
 
   void _speakWord(SpeakWord word, bool isBangla) {
@@ -139,14 +263,42 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
               // Header
               Padding(
                 padding: const EdgeInsets.all(AppTheme.spacingLg),
-                child: Text(
-                  isBangla ? 'চলো বলি' : "Let's Speak",
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.textPrimary,
-                  ),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Haptics.light();
+                        context.go('/');
+                      },
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                          boxShadow: AppTheme.shadowSm,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: AppTheme.textPrimary,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        isBangla ? 'চলো বলি' : "Let's Speak",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 44), // Balance the back button
+                  ],
                 ),
               ),
 
@@ -242,6 +394,55 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
                 padding: const EdgeInsets.all(AppTheme.spacing2Xl),
                 child: Column(
                   children: [
+                    // Feedback Message
+                    if (_feedbackMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.spacingLg,
+                            vertical: AppTheme.spacingMd,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _lastMatchResult == true
+                                ? AppTheme.primaryGreen.withValues(alpha: 0.1)
+                                : AppTheme.primaryOrange.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                            border: Border.all(
+                              color: _lastMatchResult == true
+                                  ? AppTheme.primaryGreen
+                                  : AppTheme.primaryOrange,
+                              width: 2,
+                            ),
+                          ),
+                          child: Text(
+                            _feedbackMessage!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Nunito',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: _lastMatchResult == true
+                                  ? AppTheme.primaryGreen
+                                  : AppTheme.primaryOrange,
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Recognized text display
+                    if (_recognizedText.isNotEmpty && _isRecording)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+                        child: Text(
+                          '"$_recognizedText"',
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.textPrimary,
+                          ),
+                        ),
+                      ),
                     AnimatedBuilder(
                       animation: _pulseAnimation,
                       builder: (context, child) {
@@ -284,10 +485,10 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
                     const SizedBox(height: AppTheme.spacingMd),
                     Text(
                       _isRecording
-                          ? (isBangla ? 'রেকর্ডিং...' : 'Recording...')
-                          : (isBangla
-                              ? 'বলতে মাইকে ট্যাপ করো'
-                              : 'Tap to speak'),
+                          ? (isBangla ? 'শুনছি...' : 'Listening...')
+                          : (_selectedWord == null 
+                              ? (isBangla ? 'প্রথমে একটি শব্দ বেছে নাও' : 'Select a word first')
+                              : (isBangla ? 'বলতে মাইকে ট্যাপ করো' : 'Tap to speak')),
                       style: const TextStyle(
                         fontFamily: 'Nunito',
                         fontSize: 14,

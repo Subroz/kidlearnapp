@@ -27,11 +27,14 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
 /build/
 /coverage/
+pubspec.lock
 
 # Symbolication related
 app.*.symbols
@@ -43,3 +46,68 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android generated files
+/android/.gradle/
+/android/.kotlin/
+/android/local.properties
+/android/gradlew
+/android/gradlew.bat
+/android/**/GeneratedPluginRegistrant.java
+/android/app/build/
+/android/build/
+*.apk
+*.aab
+
+# iOS generated files
+/ios/.symlinks/
+/ios/Flutter/.last_build_id
+/ios/Flutter/App.framework
+/ios/Flutter/Flutter.framework
+/ios/Flutter/Flutter.podspec
+/ios/Flutter/Generated.xcconfig
+/ios/Flutter/ephemeral/
+/ios/ServiceDefinitions.json
+/ios/Runner/GeneratedPluginRegistrant.*
+/ios/Pods/
+/ios/.generated/
+/ios/Podfile.lock
+
+# Windows generated files
+/windows/flutter/ephemeral/
+
+# Web generated files
+/web/.dart_tool/
+
+# macOS generated files
+/macos/Flutter/ephemeral/
+/macos/Pods/
+/macos/Podfile.lock
+
+# Linux generated files
+/linux/flutter/ephemeral/
+
+# Environment config (contains API keys)
+assets/env.json
+
+# Python
+py-m/
+
+# Models (large files)
+assets/models/
+
+# Cursor IDE
+.cursor/
+
+# Metadata
+.metadata
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Test coverage
+coverage/
+*.lcov
+

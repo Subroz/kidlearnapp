@@ -1,42 +1,43 @@
 name: kidlearn_flutter
 description: A beautiful kids learning app with alphabet, math, drawing, stories, and speech features.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  
+
   # Routing
   go_router: ^14.2.0
-  
+
   # State Management
   flutter_riverpod: ^2.5.1
-  
+
   # Storage
   shared_preferences: ^2.3.2
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.5
-  
+
   # Connectivity
   connectivity_plus: ^6.1.0
-  
+
   # UI
   flutter_svg: ^2.0.10
   google_fonts: ^6.2.1
-  
+
   # Speech
   flutter_tts: ^4.0.2
-  
+  speech_to_text: ^7.0.0
+
   # AI (Gemini)
   google_generative_ai: ^0.4.6
-  
+
   # Icons
   cupertino_icons: ^1.0.6
 
@@ -49,7 +50,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
+
   assets:
     - assets/data/
-    - assets/images/
+    - assets/env.json
+    - assets/models/

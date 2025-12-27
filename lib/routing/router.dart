@@ -8,7 +8,7 @@ import '../features/home/home_screen.dart';
 import '../features/alphabet/english_alphabet_screen.dart';
 import '../features/alphabet/bangla_alphabet_screen.dart';
 import '../features/alphabet/letter_detail_screen.dart';
-import '../features/math/math_screen.dart';
+import '../features/math/math_setup_screen.dart';
 import '../features/draw/draw_screen.dart';
 import '../features/story/story_screen.dart';
 import '../features/speak/speak_screen.dart';
@@ -50,7 +50,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'math',
             pageBuilder: (context, state) => CustomTransitionPage(
               key: state.pageKey,
-              child: const MathScreen(),
+              child: const MathSetupScreen(),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 return FadeTransition(opacity: animation, child: child);
               },

@@ -98,7 +98,7 @@ class EnglishAlphabetData {
     Letter(
       id: 'E',
       letter: 'E',
-      pronunciation: 'ee',
+      pronunciation: 'e',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'Elephant', meaning: 'A big animal'),
@@ -241,7 +241,7 @@ class EnglishAlphabetData {
     Letter(
       id: 'R',
       letter: 'R',
-      pronunciation: 'ar',
+      pronunciation: 'are',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'Rainbow', meaning: 'Colors in the sky'),
@@ -347,7 +347,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'অ',
       letter: 'অ',
-      pronunciation: 'o',
+      pronunciation: 'শ্বরেঅ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'অজগর', meaning: 'Python'),
@@ -357,7 +357,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'আ',
       letter: 'আ',
-      pronunciation: 'aa',
+      pronunciation: 'শ্বরেআ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'আম', meaning: 'Mango'),
@@ -367,7 +367,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ই',
       letter: 'ই',
-      pronunciation: 'i',
+      pronunciation: 'রশইই',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ইলিশ', meaning: 'Hilsa fish'),
@@ -377,7 +377,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঈ',
       letter: 'ঈ',
-      pronunciation: 'ee',
+      pronunciation: 'দীর্ঘ ঈ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ঈগল', meaning: 'Eagle'),
@@ -387,7 +387,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'উ',
       letter: 'উ',
-      pronunciation: 'u',
+      pronunciation: 'রশশউ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'উট', meaning: 'Camel'),
@@ -397,7 +397,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঊ',
       letter: 'ঊ',
-      pronunciation: 'oo',
+      pronunciation: 'দীর্ঘ ঊ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ঊনিশ', meaning: 'Nineteen'),
@@ -407,7 +407,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঋ',
       letter: 'ঋ',
-      pronunciation: 'ri',
+      pronunciation: 'ঋ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ঋতু', meaning: 'Season'),
@@ -417,7 +417,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'এ',
       letter: 'এ',
-      pronunciation: 'e',
+      pronunciation: 'a',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'একতা', meaning: 'Unity'),
@@ -427,7 +427,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঐ',
       letter: 'ঐ',
-      pronunciation: 'oi',
+      pronunciation: 'ঐ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ঐক্য', meaning: 'Harmony'),
@@ -436,7 +436,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ও',
       letter: 'ও',
-      pronunciation: 'o',
+      pronunciation: 'ও_ও',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ওল', meaning: 'Yam'),
@@ -446,7 +446,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঔ',
       letter: 'ঔ',
-      pronunciation: 'ou',
+      pronunciation: 'ঔ',
       type: 'vowel',
       examples: [
         ExampleWord(word: 'ঔষধ', meaning: 'Medicine'),
@@ -459,7 +459,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ক',
       letter: 'ক',
-      pronunciation: 'ko',
+      pronunciation: 'ক',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'কলম', meaning: 'Pen'),
@@ -469,7 +469,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'খ',
       letter: 'খ',
-      pronunciation: 'kho',
+      pronunciation: 'খ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'খরগোশ', meaning: 'Rabbit'),
@@ -479,7 +479,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'গ',
       letter: 'গ',
-      pronunciation: 'go',
+      pronunciation: 'গ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'গরু', meaning: 'Cow'),
@@ -489,7 +489,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঘ',
       letter: 'ঘ',
-      pronunciation: 'gho',
+      pronunciation: 'ঘ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ঘড়ি', meaning: 'Clock'),
@@ -499,7 +499,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঙ',
       letter: 'ঙ',
-      pronunciation: 'ngo',
+      pronunciation: 'ঙ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'বাঙালি', meaning: 'Bengali'),
@@ -508,7 +508,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'চ',
       letter: 'চ',
-      pronunciation: 'cho',
+      pronunciation: 'চ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'চাঁদ', meaning: 'Moon'),
@@ -518,7 +518,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ছ',
       letter: 'ছ',
-      pronunciation: 'chho',
+      pronunciation: 'ছ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ছবি', meaning: 'Picture'),
@@ -528,7 +528,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'জ',
       letter: 'জ',
-      pronunciation: 'jo',
+      pronunciation: 'জ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'জল', meaning: 'Water'),
@@ -538,7 +538,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঝ',
       letter: 'ঝ',
-      pronunciation: 'jho',
+      pronunciation: 'ঝ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ঝরনা', meaning: 'Waterfall'),
@@ -547,7 +547,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ট',
       letter: 'ট',
-      pronunciation: 'to',
+      pronunciation: 'ট',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'টমেটো', meaning: 'Tomato'),
@@ -557,7 +557,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঠ',
       letter: 'ঠ',
-      pronunciation: 'tho',
+      pronunciation: 'ঠ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ঠোঁট', meaning: 'Lips'),
@@ -566,7 +566,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ড',
       letter: 'ড',
-      pronunciation: 'do',
+      pronunciation: 'ড',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ডাল', meaning: 'Lentils'),
@@ -576,7 +576,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ঢ',
       letter: 'ঢ',
-      pronunciation: 'dho',
+      pronunciation: 'ঢ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ঢোল', meaning: 'Drum'),
@@ -585,7 +585,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ণ',
       letter: 'ণ',
-      pronunciation: 'no',
+      pronunciation: 'ণ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'রামায়ণ', meaning: 'Ramayana'),
@@ -594,7 +594,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ত',
       letter: 'ত',
-      pronunciation: 'to',
+      pronunciation: 'ত',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'তারা', meaning: 'Star'),
@@ -604,7 +604,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'থ',
       letter: 'থ',
-      pronunciation: 'tho',
+      pronunciation: 'থ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'থালা', meaning: 'Plate'),
@@ -613,7 +613,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'দ',
       letter: 'দ',
-      pronunciation: 'do',
+      pronunciation: 'দ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'দই', meaning: 'Yogurt'),
@@ -623,7 +623,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ধ',
       letter: 'ধ',
-      pronunciation: 'dho',
+      pronunciation: 'ধ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ধান', meaning: 'Rice plant'),
@@ -632,7 +632,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ন',
       letter: 'ন',
-      pronunciation: 'no',
+      pronunciation: 'ন',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'নদী', meaning: 'River'),
@@ -642,7 +642,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'প',
       letter: 'প',
-      pronunciation: 'po',
+      pronunciation: 'প',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'পাখি', meaning: 'Bird'),
@@ -652,7 +652,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ফ',
       letter: 'ফ',
-      pronunciation: 'pho',
+      pronunciation: 'ফ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ফুল', meaning: 'Flower'),
@@ -662,7 +662,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ব',
       letter: 'ব',
-      pronunciation: 'bo',
+      pronunciation: 'ব',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'বই', meaning: 'Book'),
@@ -672,7 +672,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ভ',
       letter: 'ভ',
-      pronunciation: 'bho',
+      pronunciation: 'ভ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ভালুক', meaning: 'Bear'),
@@ -681,7 +681,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ম',
       letter: 'ম',
-      pronunciation: 'mo',
+      pronunciation: 'ম',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'মাছ', meaning: 'Fish'),
@@ -691,7 +691,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'য',
       letter: 'য',
-      pronunciation: 'jo',
+      pronunciation: 'য',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'যাত্রা', meaning: 'Journey'),
@@ -700,7 +700,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'র',
       letter: 'র',
-      pronunciation: 'ro',
+      pronunciation: 'র',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'রাজা', meaning: 'King'),
@@ -710,7 +710,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ল',
       letter: 'ল',
-      pronunciation: 'lo',
+      pronunciation: 'ল',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'লাল', meaning: 'Red'),
@@ -720,7 +720,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'শ',
       letter: 'শ',
-      pronunciation: 'sho',
+      pronunciation: 'শ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'শিশু', meaning: 'Child'),
@@ -729,7 +729,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'ষ',
       letter: 'ষ',
-      pronunciation: 'sho',
+      pronunciation: 'ষ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'ষাঁড়', meaning: 'Bull'),
@@ -738,7 +738,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'স',
       letter: 'স',
-      pronunciation: 'so',
+      pronunciation: 'স',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'সূর্য', meaning: 'Sun'),
@@ -748,7 +748,7 @@ class BanglaAlphabetData {
     Letter(
       id: 'হ',
       letter: 'হ',
-      pronunciation: 'ho',
+      pronunciation: 'হ',
       type: 'consonant',
       examples: [
         ExampleWord(word: 'হাতি', meaning: 'Elephant'),

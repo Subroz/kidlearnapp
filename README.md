@@ -5,13 +5,14 @@ A beautiful, interactive kids learning app built with Flutter. Features bilingua
 ## Features
 
 - **Alphabet Learning** - Learn English and Bangla alphabets with swipeable cards
-- **Math Games** - Addition, subtraction, multiplication, and division with visual feedback
-- **Drawing Canvas** - Creative drawing board with color picker and guide characters
+- **Math Games** - Number(bangla and English), Multiplication table,Addition, subtraction, multiplication, and division with visual feedback
+- **Drawing Canvas** - Creative drawing board with color picker and guide characters. Used AI to trace and recognize character(Gemini API).
+future work()
 - **Story Generator** - AI-powered story creation using selected words (Gemini API)
 - **Speech Practice** - Learn pronunciation with text-to-speech
 - **Bilingual** - Full English and Bangla language support
 - **Beautiful UI** - Kid-friendly, colorful design with animations
-
+- 
 ## Getting Started
 
 ### Prerequisites
@@ -24,23 +25,27 @@ A beautiful, interactive kids learning app built with Flutter. Features bilingua
 ### Installation
 
 1. **Clone or copy the project**
+
    ```bash
    cd kidlearn_flutter
    ```
 
 2. **Install dependencies**
+
    ```bash
    flutter pub get
    ```
 
 3. **Run the app**
-   
+
    Without API keys (story generation will use fallback stories):
+
    ```bash
    flutter run
    ```
-   
+
    With Gemini API key (for AI story generation):
+
    ```bash
    flutter run --dart-define=GEMINI_API_KEY=your_api_key_here
    ```
@@ -48,16 +53,19 @@ A beautiful, interactive kids learning app built with Flutter. Features bilingua
 ### Build for Production
 
 **Android APK:**
+
 ```bash
 flutter build apk --dart-define=GEMINI_API_KEY=your_api_key
 ```
 
 **iOS:**
+
 ```bash
 flutter build ios --dart-define=GEMINI_API_KEY=your_api_key
 ```
 
 **Web:**
+
 ```bash
 flutter build web --dart-define=GEMINI_API_KEY=your_api_key
 ```
@@ -111,7 +119,9 @@ lib/
 ## Customization
 
 ### Colors
+
 Edit `lib/core/theme/app_theme.dart` to customize colors:
+
 ```dart
 static const Color primaryPurple = Color(0xFF7C3AED);
 static const Color primaryBlue = Color(0xFF3B82F6);
@@ -119,11 +129,13 @@ static const Color primaryBlue = Color(0xFF3B82F6);
 ```
 
 ### Adding New Languages
+
 1. Add translation strings in `lib/core/i18n/language_controller.dart`
 2. Update the `AppLanguage` enum
 3. Add language toggle logic
 
 ### Adding Alphabets
+
 Edit `lib/features/alphabet/models/letter_models.dart` to add new letters or languages.
 
 ## License
@@ -131,6 +143,8 @@ Edit `lib/features/alphabet/models/letter_models.dart` to add new letters or lan
 This project is open source. Feel free to use and modify for educational purposes.
 
 ## Credits
+
+### Need for paper writing.
 
 - Design inspired by Duolingo, Khan Academy Kids, and ABCmouse
 - Built with Flutter and love for kids' education

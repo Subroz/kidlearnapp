@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/screen_background.dart';
 import '../../core/widgets/kid_button.dart';
@@ -142,8 +143,15 @@ class _WordSelector extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(AppTheme.spacingLg),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Back Button
+              KidIconButton(
+                icon: Icons.arrow_back_rounded,
+                onPressed: () => context.go('/'),
+                size: 44,
+                backgroundColor: Colors.white.withValues(alpha: 0.9),
+              ),
+              const SizedBox(width: AppTheme.spacingMd),
               Text(
                 isBangla ? 'গল্পের সময়' : 'Story Time',
                 style: const TextStyle(
@@ -153,6 +161,7 @@ class _WordSelector extends StatelessWidget {
                   color: AppTheme.textPrimary,
                 ),
               ),
+              const Spacer(),
               // Selected count badge
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -220,9 +229,8 @@ class _WordSelector extends StatelessWidget {
                 ? (isBangla ? 'তৈরি হচ্ছে...' : 'Creating...')
                 : (isBangla ? 'গল্প তৈরি করো' : 'Generate Story'),
             icon: isGenerating ? null : Icons.auto_stories_rounded,
-            onPressed: selectedWords.length >= 3 && !isGenerating
-                ? onGenerate
-                : null,
+            onPressed:
+                selectedWords.length >= 3 && !isGenerating ? onGenerate : null,
             isLoading: isGenerating,
             size: KidButtonSize.large,
             fullWidth: true,
@@ -476,7 +484,9 @@ class _StoryViewState extends State<_StoryView> {
                 // Moral
                 if (widget.story.moral.isNotEmpty) ...[
                   _StorySection(
-                    title: widget.isBangla ? 'গল্পের শিক্ষা' : 'Moral of the Story',
+                    title: widget.isBangla
+                        ? 'গল্পের শিক্ষা'
+                        : 'Moral of the Story',
                     icon: Icons.lightbulb_rounded,
                     color: AppTheme.primaryGreen,
                     content: widget.story.moral,
@@ -522,7 +532,8 @@ class _StoryViewState extends State<_StoryView> {
             onPressed: _togglePlayPause,
             size: KidButtonSize.large,
             fullWidth: true,
-            backgroundColor: _isPlaying ? AppTheme.primaryPink : AppTheme.primaryOrange,
+            backgroundColor:
+                _isPlaying ? AppTheme.primaryPink : AppTheme.primaryOrange,
           ),
         ),
       ],

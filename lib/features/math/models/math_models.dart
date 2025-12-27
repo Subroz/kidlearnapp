@@ -3,6 +3,10 @@ enum MathOperation {
   subtraction,
   multiplication,
   division,
+  numbersBangla,
+  numbersEnglish,
+  multiplicationTable,
+  mathPractice,
 }
 
 enum MathDifficulty {
@@ -36,6 +40,11 @@ class MathProblem {
         return '×';
       case MathOperation.division:
         return '÷';
+      case MathOperation.numbersBangla:
+      case MathOperation.numbersEnglish:
+      case MathOperation.multiplicationTable:
+      case MathOperation.mathPractice:
+        return '';
     }
   }
 
