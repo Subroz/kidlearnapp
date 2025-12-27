@@ -140,7 +140,7 @@ Edit `lib/features/alphabet/models/letter_models.dart` to add new letters or lan
 
 ## License
 
-This project is open source. Feel free to use and modify for educational purposes.
+This project is open source.
 
 ## Credits
 
