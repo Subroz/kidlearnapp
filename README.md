@@ -4,15 +4,56 @@ A beautiful, interactive kids learning app built with Flutter. Features bilingua
 
 ## Features
 
-- **Alphabet Learning** - Learn English and Bangla alphabets with swipeable cards
-- **Math Games** - Number(bangla and English), Multiplication table,Addition, subtraction, multiplication, and division with visual feedback
-- **Drawing Canvas** - Creative drawing board with color picker and guide characters. Used AI to trace and recognize character(Gemini API).
-future work()
-- **Story Generator** - AI-powered story creation using selected words (Gemini API)
-- **Speech Practice** - Learn pronunciation with text-to-speech
-- **Bilingual** - Full English and Bangla language support
-- **Beautiful UI** - Kid-friendly, colorful design with animations
-- 
+### **System Features Overview**
+
+- AI-enhanced mobile application for early childhood learning
+- Supports interactive, bilingual, and personalized education
+
+### **Alphabet Learning Module**
+
+- English alphabets (A–Z) with pronunciation
+- Bangla alphabets: স্বরবর্ণ and ব্যঞ্জনবর্ণ
+- Example words for each letter
+- Text-to-Speech based pronunciation support
+
+### **Mathematics Learning Module**
+
+- English and Bangla number systems
+- Multiplication tables
+- Basic arithmetic: addition, subtraction, multiplication, division
+- Adjustable difficulty levels
+
+### **Handwriting & Drawing Module**
+
+- Free-hand drawing and guided tracing
+- Adjustable stroke width and color options
+- AI-based handwriting recognition using Google Gemini Vision
+- Undo and clear functionality
+
+### **AI Story Generation Module**
+
+- Word-based personalized story generation
+- Powered by Google Gemini AI
+- Stories include moral lessons and comprehension questions
+- Text-to-Speech narration in English and Bangla
+- Speech & Pronunciation Module
+- Speech recognition for pronunciation practice
+- Vocabulary categories (animals, food, colors, numbers, family)
+- Real-time pronunciation feedback
+- Reference pronunciation using Text-to-Speech
+
+### **Bilingual Support**
+
+- Full support for English and Bangla
+- Easy language switching from home screen
+- Persistent language preference storage
+  
+### **Additional System Features**
+
+- Child-friendly UI with animations and transitions
+- Haptic feedback and onboarding tutorial
+- Offline support for core learning features
+  
 ## Getting Started
 
 ### Prerequisites
@@ -37,17 +78,9 @@ future work()
    ```
 
 3. **Run the app**
-
-   Without API keys (story generation will use fallback stories):
-
+   
    ```bash
    flutter run
-   ```
-
-   With Gemini API key (for AI story generation):
-
-   ```bash
-   flutter run --dart-define=GEMINI_API_KEY=your_api_key_here
    ```
 
 ### Build for Production
@@ -55,19 +88,19 @@ future work()
 **Android APK:**
 
 ```bash
-flutter build apk --dart-define=GEMINI_API_KEY=your_api_key
+flutter build apk --release
 ```
 
 **iOS:**
 
 ```bash
-flutter build ios --dart-define=GEMINI_API_KEY=your_api_key
+flutter build ios --release
 ```
 
 **Web:**
 
 ```bash
-flutter build web --dart-define=GEMINI_API_KEY=your_api_key
+flutter build web
 ```
 
 ## Project Structure
@@ -116,27 +149,20 @@ lib/
 - **shared_preferences** - Local storage
 - **hive** - Fast local database
 
-## Customization
 
-### Colors
+## Future Work
 
-Edit `lib/core/theme/app_theme.dart` to customize colors:
+- **Content Expansion:** Multi-language support, phonics-based learning, and advanced Bangla literacy (যুক্তবর্ণ).
 
-```dart
-static const Color primaryPurple = Color(0xFF7C3AED);
-static const Color primaryBlue = Color(0xFF3B82F6);
-// ... more colors
-```
+- **Gamification:** Rewards, streaks, leaderboards, and interactive learning games.
 
-### Adding New Languages
+- **AI Enhancements:** Personalized learning paths, adaptive difficulty, handwriting recognition, and pronunciation feedback.
 
-1. Add translation strings in `lib/core/i18n/language_controller.dart`
-2. Update the `AppLanguage` enum
-3. Add language toggle logic
+- **Parental Controls:** Progress monitoring, screen time management, and multi-child profiles.
 
-### Adding Alphabets
+- **UI/UX & Media:** Dark mode, animated guides, accessibility improvements, audio/video learning support.
 
-Edit `lib/features/alphabet/models/letter_models.dart` to add new letters or languages.
+- **Platform & Backend:** Offline mode, cloud sync, Firebase integration, analytics, and cross-device support.
 
 ## License
 
@@ -144,7 +170,12 @@ This project is open source.
 
 ## Credits
 
-### Need for paper writing.
+- Jahidul Islam Sajib and Abu Bakar Siddiq — Application design and development
 
-- Design inspired by Duolingo, Khan Academy Kids, and ABCmouse
-- Built with Flutter and love for kids' education
+- Abu Bakar Siddiq and Jahidul Islam Sajib — AI model research and integration
+
+- Abu Bakar Siddiq — UI/UX design support
+
+- Syed Muhaiminul Haque — Testing and feedback
+  
+- Tusher Islam and Muhammad Ashraful - Paper Writing 
