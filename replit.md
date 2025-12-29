@@ -65,6 +65,7 @@ lib/
 - Math operations with adjustable difficulty
 - Free-hand drawing with AI handwriting recognition
 - AI-powered story generation with moral lessons
+- Animated speaking cat character that appears during story narration
 - Speech recognition for pronunciation practice
 - Child-friendly UI with animations
 - Educational games section with:
