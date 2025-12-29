@@ -13,7 +13,7 @@ class KidLearnApp extends ConsumerWidget {
     final language = ref.watch(languageProvider);
     
     return MaterialApp.router(
-      title: language == AppLanguage.bangla ? 'কিডলার্ন' : 'KidLearn',
+      title: language == AppLanguage.bangla ? 'কিডলার্ন' : 'KIDLEARN',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
