@@ -662,14 +662,14 @@ class _AnimatedSpeakingCat extends StatelessWidget {
           return Transform.translate(
             offset: Offset(0, -bounceAnimation.value),
             child: Container(
-              width: 120,
-              height: 140,
+              width: 140,
+              height: 160,
               margin: const EdgeInsets.only(bottom: AppTheme.spacingLg),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   CustomPaint(
-                    size: const Size(120, 140),
+                    size: const Size(140, 130),
                     painter: _CatPainter(mouthOpenness: mouthAnimation.value),
                   ),
                   Positioned(
@@ -726,10 +726,14 @@ class _CatPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final centerX = size.width / 2;
-    final centerY = size.height / 2 - 10;
+    final centerY = size.height / 2;
 
-    final bodyPaint = Paint()
-      ..color = const Color(0xFFFF9800)
+    final orangePaint = Paint()
+      ..color = const Color(0xFFFF8C00)
+      ..style = PaintingStyle.fill;
+
+    final darkOrangePaint = Paint()
+      ..color = const Color(0xFFE07800)
       ..style = PaintingStyle.fill;
 
     final whitePaint = Paint()
@@ -737,183 +741,195 @@ class _CatPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final blackPaint = Paint()
-      ..color = Colors.black
+      ..color = const Color(0xFF2D2D2D)
       ..style = PaintingStyle.fill;
 
     final pinkPaint = Paint()
-      ..color = const Color(0xFFFFB6C1)
+      ..color = const Color(0xFFFF6B8A)
       ..style = PaintingStyle.fill;
 
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX, centerY + 15),
-        width: 70,
-        height: 60,
-      ),
-      bodyPaint,
-    );
+    final lightPinkPaint = Paint()
+      ..color = const Color(0xFFFFB4C4)
+      ..style = PaintingStyle.fill;
 
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX, centerY - 15),
-        width: 55,
-        height: 50,
-      ),
-      bodyPaint,
-    );
+    final outlinePaint = Paint()
+      ..color = const Color(0xFF8B4513)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
 
     final leftEarPath = Path()
-      ..moveTo(centerX - 20, centerY - 35)
-      ..lineTo(centerX - 30, centerY - 60)
-      ..lineTo(centerX - 5, centerY - 40)
+      ..moveTo(centerX - 28, centerY - 25)
+      ..lineTo(centerX - 40, centerY - 58)
+      ..lineTo(centerX - 12, centerY - 32)
       ..close();
-    canvas.drawPath(leftEarPath, bodyPaint);
+    canvas.drawPath(leftEarPath, orangePaint);
+    canvas.drawPath(leftEarPath, outlinePaint);
 
     final rightEarPath = Path()
-      ..moveTo(centerX + 20, centerY - 35)
-      ..lineTo(centerX + 30, centerY - 60)
-      ..lineTo(centerX + 5, centerY - 40)
+      ..moveTo(centerX + 28, centerY - 25)
+      ..lineTo(centerX + 40, centerY - 58)
+      ..lineTo(centerX + 12, centerY - 32)
       ..close();
-    canvas.drawPath(rightEarPath, bodyPaint);
+    canvas.drawPath(rightEarPath, orangePaint);
+    canvas.drawPath(rightEarPath, outlinePaint);
 
     final leftInnerEarPath = Path()
-      ..moveTo(centerX - 18, centerY - 38)
-      ..lineTo(centerX - 25, centerY - 55)
-      ..lineTo(centerX - 8, centerY - 42)
+      ..moveTo(centerX - 26, centerY - 28)
+      ..lineTo(centerX - 35, centerY - 50)
+      ..lineTo(centerX - 15, centerY - 33)
       ..close();
     canvas.drawPath(leftInnerEarPath, pinkPaint);
 
     final rightInnerEarPath = Path()
-      ..moveTo(centerX + 18, centerY - 38)
-      ..lineTo(centerX + 25, centerY - 55)
-      ..lineTo(centerX + 8, centerY - 42)
+      ..moveTo(centerX + 26, centerY - 28)
+      ..lineTo(centerX + 35, centerY - 50)
+      ..lineTo(centerX + 15, centerY - 33)
       ..close();
     canvas.drawPath(rightInnerEarPath, pinkPaint);
 
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX - 12, centerY - 15),
-        width: 16,
-        height: 18,
-      ),
-      whitePaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX + 12, centerY - 15),
-        width: 16,
-        height: 18,
-      ),
-      whitePaint,
-    );
+    canvas.drawCircle(Offset(centerX, centerY), 48, orangePaint);
+    canvas.drawCircle(Offset(centerX, centerY), 48, outlinePaint);
 
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX - 12, centerY - 14),
-        width: 8,
-        height: 10,
-      ),
-      blackPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX + 12, centerY - 14),
-        width: 8,
-        height: 10,
-      ),
-      blackPaint,
-    );
-
-    canvas.drawCircle(Offset(centerX - 10, centerY - 16), 2, whitePaint);
-    canvas.drawCircle(Offset(centerX + 14, centerY - 16), 2, whitePaint);
-
-    final nosePath = Path()
-      ..moveTo(centerX, centerY)
-      ..lineTo(centerX - 5, centerY + 6)
-      ..lineTo(centerX + 5, centerY + 6)
-      ..close();
-    canvas.drawPath(nosePath, pinkPaint);
-
-    final mouthHeight = 5 + (mouthOpenness * 8);
     canvas.drawOval(
       Rect.fromCenter(
         center: Offset(centerX, centerY + 12),
-        width: 12,
-        height: mouthHeight,
+        width: 38,
+        height: 28,
       ),
-      pinkPaint,
+      whitePaint,
     );
 
-    if (mouthOpenness > 0.5) {
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX - 18, centerY - 8),
+        width: 24,
+        height: 28,
+      ),
+      whitePaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX + 18, centerY - 8),
+        width: 24,
+        height: 28,
+      ),
+      whitePaint,
+    );
+
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX - 18, centerY - 6),
+        width: 14,
+        height: 18,
+      ),
+      blackPaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX + 18, centerY - 6),
+        width: 14,
+        height: 18,
+      ),
+      blackPaint,
+    );
+
+    canvas.drawCircle(Offset(centerX - 14, centerY - 10), 4, whitePaint);
+    canvas.drawCircle(Offset(centerX - 20, centerY - 4), 2, whitePaint);
+    canvas.drawCircle(Offset(centerX + 22, centerY - 10), 4, whitePaint);
+    canvas.drawCircle(Offset(centerX + 16, centerY - 4), 2, whitePaint);
+
+    final nosePath = Path();
+    nosePath.moveTo(centerX, centerY + 6);
+    nosePath.quadraticBezierTo(centerX - 8, centerY + 14, centerX, centerY + 18);
+    nosePath.quadraticBezierTo(centerX + 8, centerY + 14, centerX, centerY + 6);
+    canvas.drawPath(nosePath, pinkPaint);
+
+    final noseHighlight = Paint()
+      ..color = Colors.white.withAlpha(80)
+      ..style = PaintingStyle.fill;
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX - 2, centerY + 10),
+        width: 4,
+        height: 3,
+      ),
+      noseHighlight,
+    );
+
+    final mouthHeight = 8 + (mouthOpenness * 16);
+    final mouthWidth = 16 + (mouthOpenness * 4);
+    
+    final mouthBgPaint = Paint()
+      ..color = const Color(0xFF8B0000)
+      ..style = PaintingStyle.fill;
+    
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX, centerY + 28),
+        width: mouthWidth,
+        height: mouthHeight,
+      ),
+      mouthBgPaint,
+    );
+
+    if (mouthOpenness > 0.3) {
       final tonguePaint = Paint()
-        ..color = const Color(0xFF8B0000).withAlpha(150)
+        ..color = const Color(0xFFFF6B6B)
         ..style = PaintingStyle.fill;
       canvas.drawOval(
         Rect.fromCenter(
-          center: Offset(centerX, centerY + 13),
-          width: 6,
-          height: mouthHeight - 4,
+          center: Offset(centerX, centerY + 30 + (mouthOpenness * 4)),
+          width: mouthWidth * 0.6,
+          height: mouthHeight * 0.5,
         ),
         tonguePaint,
       );
     }
 
     final whiskerPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.6)
-      ..strokeWidth = 1.5
+      ..color = const Color(0xFF4A4A4A)
+      ..strokeWidth = 2.0
+      ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     canvas.drawLine(
-      Offset(centerX - 15, centerY + 5),
-      Offset(centerX - 35, centerY),
+      Offset(centerX - 22, centerY + 14),
+      Offset(centerX - 50, centerY + 6),
       whiskerPaint,
     );
     canvas.drawLine(
-      Offset(centerX - 15, centerY + 7),
-      Offset(centerX - 35, centerY + 7),
+      Offset(centerX - 22, centerY + 18),
+      Offset(centerX - 52, centerY + 18),
       whiskerPaint,
     );
     canvas.drawLine(
-      Offset(centerX - 15, centerY + 9),
-      Offset(centerX - 35, centerY + 14),
+      Offset(centerX - 22, centerY + 22),
+      Offset(centerX - 50, centerY + 30),
       whiskerPaint,
     );
 
     canvas.drawLine(
-      Offset(centerX + 15, centerY + 5),
-      Offset(centerX + 35, centerY),
+      Offset(centerX + 22, centerY + 14),
+      Offset(centerX + 50, centerY + 6),
       whiskerPaint,
     );
     canvas.drawLine(
-      Offset(centerX + 15, centerY + 7),
-      Offset(centerX + 35, centerY + 7),
+      Offset(centerX + 22, centerY + 18),
+      Offset(centerX + 52, centerY + 18),
       whiskerPaint,
     );
     canvas.drawLine(
-      Offset(centerX + 15, centerY + 9),
-      Offset(centerX + 35, centerY + 14),
+      Offset(centerX + 22, centerY + 22),
+      Offset(centerX + 50, centerY + 30),
       whiskerPaint,
     );
 
-    final cheekPaint = Paint()
-      ..color = const Color(0xFFFFB6C1).withValues(alpha: 0.5)
-      ..style = PaintingStyle.fill;
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX - 18, centerY + 3),
-        width: 8,
-        height: 6,
-      ),
-      cheekPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX + 18, centerY + 3),
-        width: 8,
-        height: 6,
-      ),
-      cheekPaint,
-    );
+    canvas.drawCircle(Offset(centerX - 20, centerY + 12), 2, blackPaint);
+    canvas.drawCircle(Offset(centerX - 14, centerY + 14), 2, blackPaint);
+    canvas.drawCircle(Offset(centerX - 8, centerY + 12), 2, blackPaint);
+    canvas.drawCircle(Offset(centerX + 20, centerY + 12), 2, blackPaint);
+    canvas.drawCircle(Offset(centerX + 14, centerY + 14), 2, blackPaint);
+    canvas.drawCircle(Offset(centerX + 8, centerY + 12), 2, blackPaint);
   }
 
   @override
