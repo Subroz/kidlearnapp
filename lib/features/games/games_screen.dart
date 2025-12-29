@@ -27,6 +27,7 @@ class GamesScreen extends ConsumerWidget {
                     ? 'খেলতে খেলতে শেখো!'
                     : 'Learn while playing!',
                 color: theme.primary,
+                showBackButton: true,
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -80,6 +81,18 @@ class GamesScreen extends ConsumerWidget {
                         icon: Icons.palette_rounded,
                         color: const Color(0xFFF59E0B),
                         onTap: () => context.push('/games/colors'),
+                      ),
+                      const SizedBox(height: AppTheme.spacingLg),
+                      _GameCard(
+                        title: language == AppLanguage.bangla
+                            ? 'ধাঁধা সমাধান'
+                            : 'Pattern Puzzle',
+                        description: language == AppLanguage.bangla
+                            ? 'পরবর্তী প্যাটার্ন খুঁজে বের করো'
+                            : 'Find the next pattern in sequence',
+                        icon: Icons.extension_rounded,
+                        color: const Color(0xFFEC4899),
+                        onTap: () => context.push('/games/puzzle'),
                       ),
                       const SizedBox(height: AppTheme.spacing3Xl),
                     ],

@@ -72,3 +72,4 @@ lib/
   - Counting Game: Learn to count objects
   - Shape Match: Identify shapes by their silhouettes
   - Color Quiz: Learn to identify colors
+  - Pattern Puzzle: Find the next item in a sequence pattern
