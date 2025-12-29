@@ -111,3 +111,25 @@ assets/models/
 coverage/
 *.lcov
 
+# Replit
+.replit
+replit.nix
+.cache/
+.config/
+.upm/
+.local/
+.pythonlibs/
+.nix-defexpr/
+.nix-profile/
+.replit_cache/
+.breakpoints
+.always-hierarchical-navigation
+
+# Nix
+/nix/
+
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+
