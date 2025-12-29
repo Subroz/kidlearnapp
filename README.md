@@ -185,9 +185,9 @@ This project is open source.
 
 ## Credits
 
-- Jahidul Islam Sajib and Abu Bakar Siddiq — Application design and development
+- Jahidul Islam Sajib and Abu Bakar Siddique — Application design and development
 
-- Abu Bakar Siddiq and Jahidul Islam Sajib — AI model research and integration
+- Abu Bakar Siddique and Jahidul Islam Sajib — AI model research and integration
 
 - Abu Bakar Siddiq — UI/UX design support
 
