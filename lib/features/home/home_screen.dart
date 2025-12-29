@@ -122,25 +122,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       ModuleCard(
                         moduleType: ModuleType.games,
-                        onTap: () {
-                          // Coming soon
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                language == AppLanguage.bangla
-                                    ? 'শীঘ্রই আসছে!'
-                                    : 'Coming Soon!',
-                                style: const TextStyle(fontFamily: 'Nunito'),
-                              ),
-                              backgroundColor: AppTheme.primaryPurple,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AppTheme.radiusMd),
-                              ),
-                            ),
-                          );
-                        },
+                        onTap: () => context.push('/games'),
                       ),
                     ],
                   ),

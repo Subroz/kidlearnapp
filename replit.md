@@ -52,6 +52,7 @@ lib/
 │   ├── draw/                    # Drawing canvas
 │   ├── story/                   # AI stories
 │   ├── speak/                   # Speech practice
+│   ├── games/                   # Educational games
 │   ├── onboarding/              # Tutorial
 │   └── tabs/                    # Tab navigation
 └── services/                    # Backend services
@@ -66,3 +67,8 @@ lib/
 - AI-powered story generation with moral lessons
 - Speech recognition for pronunciation practice
 - Child-friendly UI with animations
+- Educational games section with:
+  - Memory Match: Find matching pairs of cards
+  - Counting Game: Learn to count objects
+  - Shape Match: Identify shapes by their silhouettes
+  - Color Quiz: Learn to identify colors

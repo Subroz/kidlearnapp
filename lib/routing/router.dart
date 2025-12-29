@@ -12,12 +12,16 @@ import '../features/math/math_setup_screen.dart';
 import '../features/draw/draw_screen.dart';
 import '../features/story/story_screen.dart';
 import '../features/speak/speak_screen.dart';
+import '../features/games/games_screen.dart';
+import '../features/games/memory_game_screen.dart';
+import '../features/games/counting_game_screen.dart';
+import '../features/games/shape_game_screen.dart';
+import '../features/games/color_game_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     routes: [
-      // Onboarding
       GoRoute(
         path: '/onboarding',
         name: 'onboarding',
@@ -30,7 +34,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       
-      // Main Tab Shell
       ShellRoute(
         builder: (context, state, child) => TabShell(child: child),
         routes: [
@@ -92,7 +95,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       
-      // Alphabet Routes
       GoRoute(
         path: '/alphabet/english',
         name: 'english-alphabet',
@@ -152,6 +154,107 @@ final routerProvider = Provider<GoRouter>((ref) {
             },
           );
         },
+      ),
+      
+      GoRoute(
+        path: '/games',
+        name: 'games',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const GamesScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/games/memory',
+        name: 'memory-game',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MemoryGameScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/games/counting',
+        name: 'counting-game',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const CountingGameScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/games/shapes',
+        name: 'shape-game',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ShapeGameScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/games/colors',
+        name: 'color-game',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ColorGameScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutCubic,
+              )),
+              child: child,
+            );
+          },
+        ),
       ),
     ],
   );
