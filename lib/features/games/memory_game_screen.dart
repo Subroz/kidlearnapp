@@ -22,7 +22,7 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
   bool _isChecking = false;
   int _matchedPairs = 0;
   int _moves = 0;
-  int _totalPairs = 6;
+  final int _totalPairs = 6;
 
   final List<_CardData> _cardDataList = [
     _CardData('A', Colors.red, Icons.abc),
@@ -257,14 +257,12 @@ class _CardData {
 class _MemoryCard {
   final int id;
   final _CardData data;
-  bool isFlipped;
-  bool isMatched;
+  bool isFlipped = false;
+  bool isMatched = false;
 
   _MemoryCard({
     required this.id,
     required this.data,
-    this.isFlipped = false,
-    this.isMatched = false,
   });
 }
 

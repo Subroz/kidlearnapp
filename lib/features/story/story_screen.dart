@@ -732,10 +732,6 @@ class _CatPainter extends CustomPainter {
       ..color = const Color(0xFFFF8C00)
       ..style = PaintingStyle.fill;
 
-    final darkOrangePaint = Paint()
-      ..color = const Color(0xFFE07800)
-      ..style = PaintingStyle.fill;
-
     final whitePaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill;
@@ -746,10 +742,6 @@ class _CatPainter extends CustomPainter {
 
     final pinkPaint = Paint()
       ..color = const Color(0xFFFF6B8A)
-      ..style = PaintingStyle.fill;
-
-    final lightPinkPaint = Paint()
-      ..color = const Color(0xFFFFB4C4)
       ..style = PaintingStyle.fill;
 
     final outlinePaint = Paint()
