@@ -13,6 +13,16 @@ KidLearn is a bilingual (English/Bangla) educational mobile application designed
 - Navigation bar icons bounce when selected with glow effects
 - Progress stats (points/days) have bouncing icons
 - Progress circle animates on load from 0% to current value
+- Implemented themed gradient backgrounds for all sections using ScreenTheme enum:
+  - Home: Pastel rainbow (pink, peach, mint, lavender, sky blue)
+  - Math: Blue tones (soft blues and indigo)
+  - Draw: Warm tones (peach, coral, pink, lavender)
+  - Stories: Purple/mystical tones (lavender, violet, mauve)
+  - Speak: Teal tones (mint, cyan, teal, sky blue)
+  - Games: Green playful tones (lime, emerald, teal, cyan)
+  - Alphabet: Pastel learning colors (mint, lavender, cream)
+- Floating background decorations now include clouds alongside circles, stars, triangles, squares, and hearts
+- Optimized animations: reduced bounce intensity (4px→3px), slowed timing (2000ms→2500ms), reduced icon pulse (1.15x→1.1x scale)
 
 ## User Preferences
 
