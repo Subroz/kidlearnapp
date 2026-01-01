@@ -131,20 +131,34 @@ class _NavItem extends StatefulWidget {
   State<_NavItem> createState() => _NavItemState();
 }
 
-class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin {
+class _NavItemState extends State<_NavItem> with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _bounceController;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _bounceAnimation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
       CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
     );
+    
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _bounceAnimation = Tween<double>(begin: 0, end: -4).animate(
+      CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
+    );
+    
+    if (widget.isSelected) {
+      _bounceController.repeat(reverse: true);
+    }
   }
 
   @override
@@ -154,12 +168,17 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
       _controller.forward().then((_) {
         if (mounted) _controller.reverse();
       });
+      _bounceController.repeat(reverse: true);
+    } else if (!widget.isSelected && oldWidget.isSelected) {
+      _bounceController.stop();
+      _bounceController.reset();
     }
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _bounceController.dispose();
     super.dispose();
   }
 
@@ -169,48 +188,63 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
       onTap: widget.onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedBuilder(
-        animation: _scaleAnimation,
+        animation: Listenable.merge([_scaleAnimation, _bounceAnimation]),
         builder: (context, child) {
-          return Transform.scale(
-            scale: widget.isSelected ? _scaleAnimation.value : 1.0,
-            child: SizedBox(
-              width: 64,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: widget.isSelected
-                          ? widget.color.withValues(alpha: 0.15)
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
+          return Transform.translate(
+            offset: Offset(0, widget.isSelected ? _bounceAnimation.value : 0),
+            child: Transform.scale(
+              scale: widget.isSelected ? _scaleAnimation.value : 1.0,
+              child: SizedBox(
+                width: 64,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: widget.isSelected
+                            ? widget.color.withValues(alpha: 0.18)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: widget.isSelected
+                            ? [
+                                BoxShadow(
+                                  color: widget.color.withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Icon(
+                        widget.icon,
+                        size: 26,
+                        color: widget.isSelected
+                            ? widget.color
+                            : AppTheme.textTertiary,
+                      ),
                     ),
-                    child: Icon(
-                      widget.icon,
-                      size: 28,
-                      color: widget.isSelected
-                          ? widget.color
-                          : AppTheme.textTertiary,
+                    const SizedBox(height: 4),
+                    AnimatedDefaultTextStyle(
+                      duration: const Duration(milliseconds: 200),
+                      style: TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: widget.isSelected ? 12 : 11,
+                        fontWeight:
+                            widget.isSelected ? FontWeight.w800 : FontWeight.w500,
+                        color: widget.isSelected
+                            ? widget.color
+                            : AppTheme.textTertiary,
+                      ),
+                      child: Text(
+                        widget.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    widget.label,
-                    style: TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 11,
-                      fontWeight:
-                          widget.isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: widget.isSelected
-                          ? widget.color
-                          : AppTheme.textTertiary,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
