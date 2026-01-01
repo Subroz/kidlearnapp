@@ -135,9 +135,13 @@ class ModuleCard extends StatefulWidget {
 }
 
 class _ModuleCardState extends State<ModuleCard>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _bounceController;
+  late AnimationController _iconPulseController;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _bounceAnimation;
+  late Animation<double> _iconPulseAnimation;
   bool _isPressed = false;
 
   @override
@@ -147,14 +151,32 @@ class _ModuleCardState extends State<ModuleCard>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+    
+    _bounceController = AnimationController(
+      duration: const Duration(milliseconds: 2000),
+      vsync: this,
+    )..repeat(reverse: true);
+    _bounceAnimation = Tween<double>(begin: 0, end: 4).animate(
+      CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
+    );
+    
+    _iconPulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+    _iconPulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _iconPulseController, curve: Curves.easeInOut),
     );
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _bounceController.dispose();
+    _iconPulseController.dispose();
     super.dispose();
   }
 
@@ -184,64 +206,82 @@ class _ModuleCardState extends State<ModuleCard>
           : null,
       onTap: widget.onTap,
       child: AnimatedBuilder(
-        animation: _scaleAnimation,
+        animation: Listenable.merge([_scaleAnimation, _bounceAnimation]),
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: Container(
-              padding: const EdgeInsets.all(AppTheme.spacingLg),
-              decoration: BoxDecoration(
-                gradient: theme.gradient,
-                borderRadius: BorderRadius.circular(AppTheme.radius2Xl),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.primary.withValues(alpha: _isPressed ? 0.2 : 0.35),
-                    blurRadius: _isPressed ? 8 : 16,
-                    offset: Offset(0, _isPressed ? 4 : 8),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.25),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      theme.icon,
-                      size: 32,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: AppTheme.spacingMd),
-                  Text(
-                    theme.titleEn,
-                    style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  if (widget.showProgress) ...[
-                    const SizedBox(height: AppTheme.spacingSm),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: widget.progress,
-                        backgroundColor: Colors.white.withValues(alpha: 0.3),
-                        valueColor:
-                            const AlwaysStoppedAnimation(Colors.white),
-                        minHeight: 4,
-                      ),
+          return Transform.translate(
+            offset: Offset(0, -_bounceAnimation.value),
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Container(
+                padding: const EdgeInsets.all(AppTheme.spacingLg),
+                decoration: BoxDecoration(
+                  gradient: theme.gradient,
+                  borderRadius: BorderRadius.circular(AppTheme.radius2Xl),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.primary.withValues(alpha: _isPressed ? 0.2 : 0.35),
+                      blurRadius: _isPressed ? 8 : 20,
+                      offset: Offset(0, _isPressed ? 4 : 10 + _bounceAnimation.value),
                     ),
                   ],
-                ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedBuilder(
+                      animation: _iconPulseAnimation,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _iconPulseAnimation.value,
+                          child: Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.25),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.white.withValues(alpha: 0.3),
+                                  blurRadius: 12,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              theme.icon,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppTheme.spacingMd),
+                    Text(
+                      theme.titleEn,
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    if (widget.showProgress) ...[
+                      const SizedBox(height: AppTheme.spacingSm),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: widget.progress,
+                          backgroundColor: Colors.white.withValues(alpha: 0.3),
+                          valueColor:
+                              const AlwaysStoppedAnimation(Colors.white),
+                          minHeight: 4,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           );
