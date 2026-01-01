@@ -175,6 +175,7 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
 
     return Scaffold(
       body: ScreenBackground(
+        theme: ScreenTheme.games,
         showFloatingShapes: true,
         child: SafeArea(
           child: Column(

@@ -17,6 +17,7 @@ class GamesScreen extends ConsumerWidget {
 
     return Scaffold(
       body: ScreenBackground(
+        theme: ScreenTheme.games,
         showFloatingShapes: true,
         child: SafeArea(
           child: Column(

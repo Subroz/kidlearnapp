@@ -150,6 +150,7 @@ class _ShapeGameScreenState extends ConsumerState<ShapeGameScreen> {
 
     return Scaffold(
       body: ScreenBackground(
+        theme: ScreenTheme.games,
         showFloatingShapes: true,
         child: SafeArea(
           child: Column(

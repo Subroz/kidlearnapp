@@ -153,6 +153,7 @@ class _ColorGameScreenState extends ConsumerState<ColorGameScreen> {
 
     return Scaffold(
       body: ScreenBackground(
+        theme: ScreenTheme.games,
         showFloatingShapes: true,
         child: SafeArea(
           child: Column(

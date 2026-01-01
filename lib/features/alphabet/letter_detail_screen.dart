@@ -51,15 +51,7 @@ class LetterDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       body: ScreenBackground(
-        gradientColors: isBangla
-            ? [
-                const Color(0xFFD1FAE5),
-                const Color(0xFFFEF3C7),
-              ]
-            : [
-                const Color(0xFFDBEAFE),
-                const Color(0xFFEDE9FE),
-              ],
+        theme: ScreenTheme.alphabet,
         child: SafeArea(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),

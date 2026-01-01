@@ -26,11 +26,7 @@ class _MultiplicationTableScreenState
 
     return Scaffold(
       body: ScreenBackground(
-        gradientColors: const [
-          Color(0xFFDBEAFE),
-          Color(0xFFC7D2FE),
-          Color(0xFFE0E7FF),
-        ],
+        theme: ScreenTheme.math,
         child: SafeArea(
           child: Column(
             children: [

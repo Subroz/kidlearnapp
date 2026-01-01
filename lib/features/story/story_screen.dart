@@ -84,11 +84,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
 
     return Scaffold(
       body: ScreenBackground(
-        gradientColors: const [
-          Color(0xFFFEF3C7),
-          Color(0xFFFDE68A),
-          Color(0xFFFEF3C7),
-        ],
+        theme: ScreenTheme.stories,
         child: SafeArea(
           child: _generatedStory != null
               ? _StoryView(

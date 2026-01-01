@@ -159,6 +159,7 @@ class _PuzzleGameScreenState extends ConsumerState<PuzzleGameScreen> {
 
     return Scaffold(
       body: ScreenBackground(
+        theme: ScreenTheme.games,
         showFloatingShapes: true,
         child: SafeArea(
           child: Column(

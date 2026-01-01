@@ -44,11 +44,7 @@ class _BanglaAlphabetScreenState extends ConsumerState<BanglaAlphabetScreen> {
 
     return Scaffold(
       body: ScreenBackground(
-        gradientColors: const [
-          Color(0xFFD1FAE5),
-          Color(0xFFDBEAFE),
-          Color(0xFFFEF3C7),
-        ],
+        theme: ScreenTheme.alphabet,
         child: SafeArea(
           child: Column(
             children: [

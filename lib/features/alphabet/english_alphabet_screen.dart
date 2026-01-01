@@ -45,11 +45,7 @@ class _EnglishAlphabetScreenState extends ConsumerState<EnglishAlphabetScreen> {
 
     return Scaffold(
       body: ScreenBackground(
-        gradientColors: const [
-          Color(0xFFDBEAFE),
-          Color(0xFFEDE9FE),
-          Color(0xFFFCE7F3),
-        ],
+        theme: ScreenTheme.alphabet,
         child: SafeArea(
           child: Column(
             children: [

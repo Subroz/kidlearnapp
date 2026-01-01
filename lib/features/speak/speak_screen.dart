@@ -252,11 +252,7 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
 
     return Scaffold(
       body: ScreenBackground(
-        gradientColors: const [
-          Color(0xFFFCE7F3),
-          Color(0xFFFDF2F8),
-          Color(0xFFFCE7F3),
-        ],
+        theme: ScreenTheme.speak,
         child: SafeArea(
           child: Column(
             children: [

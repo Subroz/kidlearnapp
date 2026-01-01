@@ -156,18 +156,18 @@ class _ModuleCardState extends State<ModuleCard>
     );
     
     _bounceController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
     )..repeat(reverse: true);
-    _bounceAnimation = Tween<double>(begin: 0, end: 4).animate(
+    _bounceAnimation = Tween<double>(begin: 0, end: 3).animate(
       CurvedAnimation(parent: _bounceController, curve: Curves.easeInOut),
     );
     
     _iconPulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2000),
       vsync: this,
     )..repeat(reverse: true);
-    _iconPulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+    _iconPulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(parent: _iconPulseController, curve: Curves.easeInOut),
     );
   }

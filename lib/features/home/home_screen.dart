@@ -17,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       body: ScreenBackground(
+        theme: ScreenTheme.home,
         showFloatingShapes: true,
         child: SafeArea(
           child: SingleChildScrollView(
