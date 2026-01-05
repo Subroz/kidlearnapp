@@ -146,49 +146,78 @@ class SpeechService {
   }
 
   // Speech Recognition Methods
+  String? _lastError;
+  String? get lastError => _lastError;
+  
   Future<bool> initializeSpeechRecognition() async {
     if (_isSpeechInitialized) return true;
-    _isSpeechInitialized = await _speech.initialize(
-      onError: (error) {
-        _isListening = false;
-      },
-      onStatus: (status) {
-        if (status == 'done' || status == 'notListening') {
+    try {
+      _isSpeechInitialized = await _speech.initialize(
+        onError: (error) {
           _isListening = false;
-        }
-      },
-    );
+          _lastError = error.errorMsg;
+        },
+        onStatus: (status) {
+          if (status == 'done' || status == 'notListening') {
+            _isListening = false;
+          }
+        },
+      );
+    } catch (e) {
+      _lastError = e.toString();
+      _isSpeechInitialized = false;
+    }
     return _isSpeechInitialized;
   }
+  
+  Future<bool> reinitializeSpeechRecognition() async {
+    _isSpeechInitialized = false;
+    _lastError = null;
+    return await initializeSpeechRecognition();
+  }
 
-  Future<void> startListening({
+  Future<bool> startListening({
     required Function(String) onResult,
     required bool isBangla,
     Duration? listenFor,
     Duration? pauseFor,
+    Function(String)? onError,
   }) async {
+    _lastError = null;
+    
     if (!_isSpeechInitialized) {
       final initialized = await initializeSpeechRecognition();
-      if (!initialized) return;
+      if (!initialized) {
+        onError?.call(_lastError ?? 'Failed to initialize speech recognition');
+        return false;
+      }
     }
 
     if (_isListening) {
       await stopListening();
     }
 
-    _isListening = true;
-    await _speech.listen(
-      onResult: (result) {
-        onResult(result.recognizedWords);
-      },
-      localeId: isBangla ? 'bn_BD' : 'en_US',
-      listenFor: listenFor ?? const Duration(seconds: 10),
-      pauseFor: pauseFor ?? const Duration(seconds: 3),
-      listenOptions: stt.SpeechListenOptions(
-        cancelOnError: true,
-        listenMode: stt.ListenMode.confirmation,
-      ),
-    );
+    try {
+      _isListening = true;
+      await _speech.listen(
+        onResult: (result) {
+          onResult(result.recognizedWords);
+        },
+        localeId: isBangla ? 'bn_BD' : 'en_US',
+        listenFor: listenFor ?? const Duration(seconds: 10),
+        pauseFor: pauseFor ?? const Duration(seconds: 3),
+        listenOptions: stt.SpeechListenOptions(
+          cancelOnError: false,
+          listenMode: stt.ListenMode.confirmation,
+        ),
+      );
+      return true;
+    } catch (e) {
+      _isListening = false;
+      _lastError = e.toString();
+      onError?.call(_lastError!);
+      return false;
+    }
   }
 
   Future<void> stopListening() async {

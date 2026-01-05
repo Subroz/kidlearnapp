@@ -103,6 +103,33 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
     _speechInitialized = await _speechService.initializeSpeechRecognition();
     if (mounted) setState(() {});
   }
+  
+  Future<void> _retryInitialization() async {
+    setState(() {
+      _feedbackMessage = null;
+    });
+    _speechInitialized = await _speechService.reinitializeSpeechRecognition();
+    if (mounted) {
+      setState(() {});
+      final language = ref.read(languageProvider);
+      final isBangla = language == AppLanguage.bangla;
+      if (_speechInitialized) {
+        setState(() {
+          _feedbackMessage = isBangla 
+              ? 'মাইক্রোফোন প্রস্তুত!' 
+              : 'Microphone ready!';
+          _lastMatchResult = true;
+        });
+      } else {
+        setState(() {
+          _feedbackMessage = isBangla 
+              ? 'মাইক্রোফোন এখনও উপলব্ধ নয়। ব্রাউজার রিফ্রেশ করে দেখো।' 
+              : 'Microphone still not available. Try refreshing the browser.';
+          _lastMatchResult = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -156,7 +183,7 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
       });
       Haptics.medium();
 
-      await _speechService.startListening(
+      final started = await _speechService.startListening(
         onResult: (text) async {
           setState(() {
             _recognizedText = text;
@@ -202,10 +229,33 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
             }
           }
         },
+        onError: (error) {
+          setState(() {
+            _isRecording = false;
+            _pulseController.stop();
+            _pulseController.reset();
+            _feedbackMessage = isBangla 
+                ? 'মাইক্রোফোন চালু করতে পারিনি। আবার চেষ্টা করো!' 
+                : 'Could not start microphone. Please try again!';
+            _lastMatchResult = null;
+          });
+        },
         isBangla: isBangla,
         listenFor: const Duration(seconds: 5),
         pauseFor: const Duration(seconds: 2),
       );
+      
+      if (!started && mounted) {
+        setState(() {
+          _isRecording = false;
+          _pulseController.stop();
+          _pulseController.reset();
+          _feedbackMessage = isBangla 
+              ? 'মাইক্রোফোন অনুমতি দাও এবং আবার চেষ্টা করো!' 
+              : 'Please allow microphone access and try again!';
+          _lastMatchResult = null;
+        });
+      }
 
       // Auto-stop after listening period if still recording
       Future.delayed(const Duration(seconds: 6), () async {
@@ -394,35 +444,56 @@ class _SpeakScreenState extends ConsumerState<SpeakScreen>
                     if (_feedbackMessage != null)
                       Padding(
                         padding: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppTheme.spacingLg,
-                            vertical: AppTheme.spacingMd,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _lastMatchResult == true
-                                ? AppTheme.primaryGreen.withValues(alpha: 0.1)
-                                : AppTheme.primaryOrange.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-                            border: Border.all(
-                              color: _lastMatchResult == true
-                                  ? AppTheme.primaryGreen
-                                  : AppTheme.primaryOrange,
-                              width: 2,
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppTheme.spacingLg,
+                                vertical: AppTheme.spacingMd,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _lastMatchResult == true
+                                    ? AppTheme.primaryGreen.withValues(alpha: 0.1)
+                                    : AppTheme.primaryOrange.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                                border: Border.all(
+                                  color: _lastMatchResult == true
+                                      ? AppTheme.primaryGreen
+                                      : AppTheme.primaryOrange,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Text(
+                                _feedbackMessage!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontFamily: 'Nunito',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: _lastMatchResult == true
+                                      ? AppTheme.primaryGreen
+                                      : AppTheme.primaryOrange,
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            _feedbackMessage!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: _lastMatchResult == true
-                                  ? AppTheme.primaryGreen
-                                  : AppTheme.primaryOrange,
-                            ),
-                          ),
+                            if (!_speechInitialized || (_lastMatchResult == null && _feedbackMessage!.contains('microphone')))
+                              Padding(
+                                padding: const EdgeInsets.only(top: AppTheme.spacingSm),
+                                child: TextButton.icon(
+                                  onPressed: _retryInitialization,
+                                  icon: const Icon(Icons.refresh_rounded, size: 18),
+                                  label: Text(
+                                    ref.watch(languageProvider) == AppLanguage.bangla 
+                                        ? 'আবার চেষ্টা করো' 
+                                        : 'Retry',
+                                    style: const TextStyle(
+                                      fontFamily: 'Nunito',
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     // Recognized text display
