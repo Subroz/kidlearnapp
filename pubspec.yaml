@@ -38,6 +38,9 @@ dependencies:
   # AI (Gemini)
   google_generative_ai: ^0.4.6
 
+  # HTTP
+  http: ^1.2.0
+
   # Icons
   cupertino_icons: ^1.0.6
 

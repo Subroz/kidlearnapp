@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'app.dart';
 import 'services/gemini_service.dart';
 import 'services/gemini_handwriting_service.dart';
+import 'services/spelling_bee_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,9 +13,10 @@ void main() async {
   // Initialize Hive for local storage
   await Hive.initFlutter();
 
-  // Initialize Gemini services (loads API keys from env.json)
+  // Initialize AI services (loads API keys from env.json)
   await GeminiService.init();
   await GeminiHandwritingService.init();
+  await SpellingBeeService.init();
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([

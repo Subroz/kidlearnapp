@@ -95,6 +95,18 @@ class GamesScreen extends ConsumerWidget {
                         color: const Color(0xFFEC4899),
                         onTap: () => context.push('/games/puzzle'),
                       ),
+                      const SizedBox(height: AppTheme.spacingLg),
+                      _GameCard(
+                        title: language == AppLanguage.bangla
+                            ? 'স্পেলিং বি'
+                            : 'Spelling Bee',
+                        description: language == AppLanguage.bangla
+                            ? 'শব্দ শুনে বানান লেখো'
+                            : 'Listen and spell words correctly',
+                        icon: Icons.spellcheck_rounded,
+                        color: const Color(0xFFF59E0B),
+                        onTap: () => context.push('/games/spelling'),
+                      ),
                       const SizedBox(height: AppTheme.spacing3Xl),
                     ],
                   ),
