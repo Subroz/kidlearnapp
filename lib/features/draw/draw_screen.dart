@@ -582,13 +582,10 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
                       },
                       onPanEnd: (details) {
                         // Start auto-recognition timer
-                        // Use longer delay for Bangla characters (more complex, multiple strokes)
+                        // 6 second delay so user has time to finish drawing
                         _recognitionTimer?.cancel();
-                        final delay = _shouldUseBangla()
-                            ? const Duration(seconds: 4)
-                            : const Duration(seconds: 2);
                         _recognitionTimer = Timer(
-                          delay,
+                          const Duration(seconds: 6),
                           _recognizeDrawing,
                         );
                       },
