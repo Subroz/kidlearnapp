@@ -111,7 +111,21 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
           as RenderRepaintBoundary?;
       if (boundary == null) return null;
 
-      final image = await boundary.toImage(pixelRatio: 1.0);
+      final rawImage = await boundary.toImage(pixelRatio: 2.0);
+
+      // Composite onto a white background for better AI recognition
+      final width = rawImage.width;
+      final height = rawImage.height;
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      canvas.drawRect(
+        Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble()),
+        Paint()..color = Colors.white,
+      );
+      canvas.drawImage(rawImage, Offset.zero, Paint());
+      final picture = recorder.endRecording();
+      final image = await picture.toImage(width, height);
+
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData?.buffer.asUint8List();
     } catch (e) {
@@ -568,9 +582,13 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
                       },
                       onPanEnd: (details) {
                         // Start auto-recognition timer
+                        // Use longer delay for Bangla characters (more complex, multiple strokes)
                         _recognitionTimer?.cancel();
+                        final delay = _shouldUseBangla()
+                            ? const Duration(seconds: 4)
+                            : const Duration(seconds: 2);
                         _recognitionTimer = Timer(
-                          const Duration(seconds: 2),
+                          delay,
                           _recognizeDrawing,
                         );
                       },

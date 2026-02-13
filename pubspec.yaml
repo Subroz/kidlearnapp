@@ -65,4 +65,4 @@ flutter:
   assets:
     - assets/data/
     - assets/env.json
-    - assets/models/
+  

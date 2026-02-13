@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 
 class HandwritingResult {
   final String character;
@@ -33,38 +34,43 @@ class HandwritingResult {
 }
 
 class GeminiHandwritingService {
-  static String _apiKey = '';
+  static String _geminiApiKey = '';
+  static String _openAiApiKey = '';
   static bool _initialized = false;
 
   GenerativeModel? _model;
 
-  /// Initialize the service by loading the API key from env.json
+  /// Initialize the service by loading API keys from env.json
   static Future<void> init() async {
     if (_initialized) return;
 
     try {
       final jsonString = await rootBundle.loadString('assets/env.json');
       final config = jsonDecode(jsonString) as Map<String, dynamic>;
-      _apiKey = config['GEMINI_HANDWRITING_API_KEY'] ?? '';
+      _geminiApiKey = config['GEMINI_HANDWRITING_API_KEY'] ?? '';
+      _openAiApiKey = config['OPENAI_API_KEY'] ?? '';
       _initialized = true;
-      debugPrint('GeminiHandwritingService: Initialized, API key loaded: ${_apiKey.isNotEmpty}');
+      debugPrint('GeminiHandwritingService: Initialized, Gemini: ${_geminiApiKey.isNotEmpty}, OpenAI: ${_openAiApiKey.isNotEmpty}');
     } catch (e) {
-      _apiKey = '';
+      _geminiApiKey = '';
+      _openAiApiKey = '';
       _initialized = true;
-      debugPrint('GeminiHandwritingService: Failed to load API key: $e');
+      debugPrint('GeminiHandwritingService: Failed to load API keys: $e');
     }
   }
 
   GeminiHandwritingService() {
-    if (_apiKey.isNotEmpty) {
+    if (_geminiApiKey.isNotEmpty) {
       _model = GenerativeModel(
         model: 'gemini-2.5-flash',
-        apiKey: _apiKey,
+        apiKey: _geminiApiKey,
       );
     }
   }
 
-  bool get isConfigured => _apiKey.isNotEmpty && _model != null;
+  bool get isGeminiConfigured => _geminiApiKey.isNotEmpty && _model != null;
+  bool get isOpenAiConfigured => _openAiApiKey.isNotEmpty;
+  bool get isConfigured => isGeminiConfigured || isOpenAiConfigured;
 
   Future<HandwritingResult> recognizeDrawing(
     Uint8List imageBytes, {
@@ -72,92 +78,197 @@ class GeminiHandwritingService {
     bool isBangla = false,
   }) async {
     if (!isConfigured) {
-      debugPrint('GeminiHandwritingService: Not configured');
+      debugPrint('GeminiHandwritingService: No AI service configured');
       return _getFallbackResult(guideCharacter);
     }
 
-    try {
-      debugPrint('GeminiHandwritingService: Recognizing drawing...');
-      
-      final prompt = _buildPrompt(guideCharacter, isBangla);
-      final imagePart = DataPart('image/png', imageBytes);
-      
-      final content = [
-        Content.multi([
-          TextPart(prompt),
-          imagePart,
-        ])
-      ];
-
-      final response = await _model!.generateContent(content);
-      
-      if (response.text == null || response.text!.isEmpty) {
-        debugPrint('GeminiHandwritingService: Empty response');
-        return _getFallbackResult(guideCharacter);
-      }
-
-      // Parse JSON response
+    // Try Gemini first
+    if (isGeminiConfigured) {
       try {
-        String jsonString = response.text!;
-        
-        // Clean up potential markdown code blocks
-        if (jsonString.contains('```json')) {
-          jsonString = jsonString.split('```json')[1].split('```')[0];
-        } else if (jsonString.contains('```')) {
-          jsonString = jsonString.split('```')[1].split('```')[0];
-        }
-
-        final json = jsonDecode(jsonString.trim());
-        debugPrint('GeminiHandwritingService: Recognition successful!');
-        return HandwritingResult.fromJson(json, guideCharacter: guideCharacter);
+        final result = await _recognizeWithGemini(imageBytes, guideCharacter: guideCharacter, isBangla: isBangla);
+        if (result != null) return result;
       } catch (e) {
-        debugPrint('GeminiHandwritingService: JSON parse error: $e');
-        // Try to extract character from plain text response
-        return _parseTextResponse(response.text!, guideCharacter);
+        debugPrint('GeminiHandwritingService: Gemini failed: $e');
+        // Fall through to OpenAI
       }
+    }
+
+    // Fallback to OpenAI
+    if (isOpenAiConfigured) {
+      try {
+        final result = await _recognizeWithOpenAi(imageBytes, guideCharacter: guideCharacter, isBangla: isBangla);
+        if (result != null) return result;
+      } catch (e) {
+        debugPrint('GeminiHandwritingService: OpenAI failed: $e');
+      }
+    }
+
+    return _getFallbackResult(guideCharacter);
+  }
+
+  Future<HandwritingResult?> _recognizeWithGemini(
+    Uint8List imageBytes, {
+    String? guideCharacter,
+    bool isBangla = false,
+  }) async {
+    debugPrint('GeminiHandwritingService: Trying Gemini...');
+
+    final prompt = _buildPrompt(guideCharacter, isBangla);
+    final imagePart = DataPart('image/png', imageBytes);
+
+    final content = [
+      Content.multi([
+        TextPart(prompt),
+        imagePart,
+      ])
+    ];
+
+    final response = await _model!.generateContent(content);
+
+    if (response.text == null || response.text!.isEmpty) {
+      debugPrint('GeminiHandwritingService: Empty Gemini response');
+      return null;
+    }
+
+    return _parseJsonResponse(response.text!, guideCharacter, 'Gemini');
+  }
+
+  Future<HandwritingResult?> _recognizeWithOpenAi(
+    Uint8List imageBytes, {
+    String? guideCharacter,
+    bool isBangla = false,
+  }) async {
+    debugPrint('GeminiHandwritingService: Trying OpenAI fallback...');
+
+    final prompt = _buildPrompt(guideCharacter, isBangla);
+    final base64Image = base64Encode(imageBytes);
+
+    final systemPrompt = isBangla
+        ? 'You are an expert in Bengali/Bangla script recognition. You can accurately distinguish between Bangla consonants (ব্যঞ্জনবর্ণ), vowels (স্বরবর্ণ), and Bangla digits (০-৯). IMPORTANT: Bangla letters and Bangla digits can look similar but are different. For example, ছ (cho, a consonant) is NOT ৫ (5, a digit). Always consider the context: if the user is practicing a Bangla letter, recognize it as a letter, not a digit. Respond only with valid JSON.'
+        : 'You are an expert handwriting recognition assistant for children. Respond only with valid JSON.';
+
+    final response = await http.post(
+      Uri.parse('https://api.openai.com/v1/chat/completions'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_openAiApiKey',
+      },
+      body: jsonEncode({
+        'model': 'gpt-4o',
+        'messages': [
+          {
+            'role': 'system',
+            'content': systemPrompt,
+          },
+          {
+            'role': 'user',
+            'content': [
+              {'type': 'text', 'text': prompt},
+              {
+                'type': 'image_url',
+                'image_url': {
+                  'url': 'data:image/png;base64,$base64Image',
+                  'detail': 'high',
+                },
+              },
+            ],
+          }
+        ],
+        'temperature': 0.2,
+        'max_tokens': 300,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      debugPrint('GeminiHandwritingService: OpenAI HTTP ${response.statusCode}: ${response.body}');
+      return null;
+    }
+
+    final data = jsonDecode(response.body);
+    final content = data['choices']?[0]?['message']?['content'];
+    if (content == null || content.isEmpty) {
+      debugPrint('GeminiHandwritingService: Empty OpenAI response');
+      return null;
+    }
+
+    return _parseJsonResponse(content, guideCharacter, 'OpenAI');
+  }
+
+  HandwritingResult? _parseJsonResponse(String text, String? guideCharacter, String source) {
+    try {
+      String jsonString = text;
+
+      // Clean up potential markdown code blocks
+      if (jsonString.contains('```json')) {
+        jsonString = jsonString.split('```json')[1].split('```')[0];
+      } else if (jsonString.contains('```')) {
+        jsonString = jsonString.split('```')[1].split('```')[0];
+      }
+
+      final json = jsonDecode(jsonString.trim());
+      debugPrint('GeminiHandwritingService: $source recognition successful!');
+      return HandwritingResult.fromJson(json, guideCharacter: guideCharacter);
     } catch (e) {
-      debugPrint('GeminiHandwritingService: Error: $e');
-      return _getFallbackResult(guideCharacter);
+      debugPrint('GeminiHandwritingService: $source JSON parse error: $e');
+      return _parseTextResponse(text, guideCharacter);
     }
   }
 
   String _buildPrompt(String? guideCharacter, bool isBangla) {
     final language = isBangla ? 'Bangla/Bengali' : 'English';
     
+    // Build Bangla-specific context when needed
+    final banglaContext = isBangla ? '''
+
+BANGLA SCRIPT CONTEXT (VERY IMPORTANT):
+- The child is practicing BANGLA SCRIPT (বাংলা লিপি)
+- Bangla consonants (ব্যঞ্জনবর্ণ): ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য র ল শ ষ স হ ড় ঢ় য় ৎ ং ঃ ঁ
+- Bangla vowels (স্বরবর্ণ): অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ
+- Bangla digits: ০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯
+- WARNING: Some Bangla letters look similar to Bangla digits but they are DIFFERENT:
+  * ছ (cho, consonant) vs ৫ (5, digit) - these look similar but are different!
+  * ৯ (9, digit) vs ৯ - context matters
+- If the target character is a Bangla LETTER, recognize the drawing as a LETTER, NOT a digit
+- If the target character is a Bangla DIGIT, recognize the drawing as a DIGIT
+- The "character" field in your response MUST be a Bangla character from the lists above, matching the type (letter vs digit) of the target''' : '';
+
     if (guideCharacter != null) {
-      return '''You are a handwriting recognition expert helping a child learn to write letters. The child is trying to draw the character "$guideCharacter".
+      return '''You are a handwriting recognition expert helping a child learn to write. The child is trying to draw the $language character "$guideCharacter".
 
 IMPORTANT: Carefully analyze the handwritten drawing in the image and determine:
-1. What character did the child actually draw?
+1. What character did the child actually draw? (MUST be a $language character)
 2. Does it match the target character "$guideCharacter"?
 3. How accurate/confident is the match (0.0 to 1.0)?
+$banglaContext
 
 Respond ONLY with valid JSON in this exact format:
 {
-  "character": "the single character you recognized from the drawing",
+  "character": "$guideCharacter",
   "is_match": true or false,
   "feedback": "encouraging feedback for the child",
   "confidence": 0.85
 }
 
 CRITICAL GUIDELINES:
-- "is_match" should be TRUE only if the drawn character clearly matches "$guideCharacter"
-- "is_match" should be FALSE if the child drew a different character, even if well-written
-- Be strict but fair in matching - the letter shape must be recognizable as "$guideCharacter"
-- For numbers and letters, compare the actual shape, not just any mark
-- If the drawing is unclear or unrecognizable, set is_match to false and character to "?"
+- The child is specifically practicing "$guideCharacter" - evaluate how well they drew THIS character
+- "character" should be "$guideCharacter" if the drawing reasonably resembles it, even if imperfect (this is a child learning!)
+- "is_match" should be TRUE if the drawing shows a reasonable attempt at "$guideCharacter"
+- "is_match" should be FALSE only if the drawing clearly shows a completely different character
+- Be lenient for children - if the overall shape roughly matches "$guideCharacter", count it as a match
+- If the drawing is totally unclear or unrecognizable, set is_match to false and character to "?"
 
 FEEDBACK GUIDELINES:
 - If is_match is TRUE: Praise them enthusiastically! ("Great job!", "Perfect!", "You did it!")
-- If is_match is FALSE: Be encouraging but clear ("Good try! That looks like [X]. Let's try $guideCharacter again!")
+- If is_match is FALSE: Be encouraging but clear ("Good try! Let's try $guideCharacter again!")
 - Keep feedback simple and kid-friendly (ages 4-10)
 - Use positive language even for mistakes
 
-The character should be a single $language character or number.''';
+The "character" field MUST be a single $language character.''';
     } else {
       return '''Analyze this handwritten character drawing.
 
 Recognize the character and provide encouraging feedback for a child learning to write.
+$banglaContext
 
 Respond ONLY with valid JSON in this exact format:
 {
