@@ -844,22 +844,11 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
   }
 
   Widget _buildActionButtons(bool isBangla) {
-    return Row(
+    return Column(
       children: [
-        // Hint Button
-        Expanded(
-          child: KidButton(
-            text: isBangla ? 'হিন্ট' : 'Hint',
-            icon: Icons.lightbulb_outline_rounded,
-            onPressed: _gameState.hintsRemaining > 0 && !_isLoading ? _getHint : null,
-            size: KidButtonSize.medium,
-            backgroundColor: AppTheme.primaryBlue,
-          ),
-        ),
-        const SizedBox(width: AppTheme.spacingMd),
-        // Check Button
-        Expanded(
-          flex: 2,
+        // Check Button (full width, prominent)
+        SizedBox(
+          width: double.infinity,
           child: KidButton(
             text: isBangla ? 'চেক করো' : 'Check',
             icon: Icons.check_circle_rounded,
@@ -868,18 +857,37 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
                 : null,
             size: KidButtonSize.large,
             backgroundColor: AppTheme.primaryGreen,
+            fullWidth: true,
           ),
         ),
-        const SizedBox(width: AppTheme.spacingMd),
-        // Skip Button
-        Expanded(
-          child: KidButton(
-            text: isBangla ? 'বাদ' : 'Skip',
-            icon: Icons.skip_next_rounded,
-            onPressed: _loadNextWord,
-            size: KidButtonSize.medium,
-            backgroundColor: AppTheme.primaryOrange,
-          ),
+        const SizedBox(height: AppTheme.spacingMd),
+        // Hint and Skip buttons side by side
+        Row(
+          children: [
+            // Hint Button
+            Expanded(
+              child: KidButton(
+                text: isBangla ? 'হিন্ট' : 'Hint',
+                icon: Icons.lightbulb_outline_rounded,
+                onPressed: _gameState.hintsRemaining > 0 && !_isLoading ? _getHint : null,
+                size: KidButtonSize.small,
+                backgroundColor: AppTheme.primaryBlue,
+                fullWidth: true,
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            // Skip Button
+            Expanded(
+              child: KidButton(
+                text: isBangla ? 'বাদ দাও' : 'Skip',
+                icon: Icons.skip_next_rounded,
+                onPressed: _loadNextWord,
+                size: KidButtonSize.small,
+                backgroundColor: AppTheme.primaryOrange,
+                fullWidth: true,
+              ),
+            ),
+          ],
         ),
       ],
     );
