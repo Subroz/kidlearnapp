@@ -164,13 +164,17 @@ class _KidButtonState extends State<KidButton>
                             const SizedBox(width: 8),
                         ],
                         if (widget.text != null)
-                          Text(
-                            widget.text!,
-                            style: TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: fontSize,
-                              fontWeight: FontWeight.w700,
-                              color: fgColor,
+                          Flexible(
+                            child: Text(
+                              widget.text!,
+                              style: TextStyle(
+                                fontFamily: 'Nunito',
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.w700,
+                                color: fgColor,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
                       ],

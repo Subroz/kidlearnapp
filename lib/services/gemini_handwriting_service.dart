@@ -10,6 +10,9 @@ class HandwritingResult {
   final double confidence;
   final bool isMatch;
   final String? expectedCharacter;
+  final int structureScore;
+  final int readabilityScore;
+  final int neatnessScore;
 
   HandwritingResult({
     required this.character,
@@ -17,18 +20,36 @@ class HandwritingResult {
     required this.confidence,
     required this.isMatch,
     this.expectedCharacter,
+    this.structureScore = 0,
+    this.readabilityScore = 0,
+    this.neatnessScore = 0,
   });
 
   factory HandwritingResult.fromJson(Map<String, dynamic> json, {String? guideCharacter}) {
     final character = json['character'] ?? '?';
-    final isMatch = json['is_match'] ?? false;
+    final neatness = (json['neatness_score'] ?? 5).toInt().clamp(1, 10);
+    
+    // Confidence from neatness score
+    final confidence = (neatness / 10.0).clamp(0.0, 1.0);
+    
+    // CLIENT-SIDE decision: match ONLY if the AI recognized the same character as the guide
+    // The AI does NOT know the target - this is a blind recognition
+    final bool isMatch;
+    if (guideCharacter == null || character == '?') {
+      isMatch = false;
+    } else {
+      isMatch = character == guideCharacter;
+    }
+    
+    debugPrint('HandwritingResult: recognized="$character", expected="$guideCharacter", neatness=$neatness, isMatch=$isMatch');
     
     return HandwritingResult(
       character: character,
       feedback: json['feedback'] ?? 'Keep practicing!',
-      confidence: (json['confidence'] ?? 0.5).toDouble(),
+      confidence: confidence,
       isMatch: isMatch,
       expectedCharacter: guideCharacter,
+      neatnessScore: neatness,
     );
   }
 }
@@ -144,8 +165,8 @@ class GeminiHandwritingService {
     final base64Image = base64Encode(imageBytes);
 
     final systemPrompt = isBangla
-        ? 'You are an expert in Bengali/Bangla script recognition. You can accurately distinguish between Bangla consonants (ব্যঞ্জনবর্ণ), vowels (স্বরবর্ণ), and Bangla digits (০-৯). IMPORTANT: Bangla letters and Bangla digits can look similar but are different. For example, ছ (cho, a consonant) is NOT ৫ (5, a digit). Always consider the context: if the user is practicing a Bangla letter, recognize it as a letter, not a digit. Respond only with valid JSON.'
-        : 'You are an expert handwriting recognition assistant for children. Respond only with valid JSON.';
+        ? 'You are a handwriting recognition system for Bengali/Bangla script. Identify the character drawn in the image. You can distinguish between Bangla consonants, vowels, and digits. Be honest about what you see. Respond only with valid JSON.'
+        : 'You are a handwriting recognition system. Identify the character drawn in the image. Be honest about what you see. Respond only with valid JSON.';
 
     final response = await http.post(
       Uri.parse('https://api.openai.com/v1/chat/completions'),
@@ -217,86 +238,50 @@ class GeminiHandwritingService {
   String _buildPrompt(String? guideCharacter, bool isBangla) {
     final language = isBangla ? 'Bangla/Bengali' : 'English';
     
-    // Build Bangla-specific context when needed
-    final banglaContext = isBangla ? '''
-
-BANGLA SCRIPT CONTEXT (VERY IMPORTANT):
-- The child is practicing BANGLA SCRIPT (বাংলা লিপি)
-- Bangla consonants (ব্যঞ্জনবর্ণ): ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য র ল শ ষ স হ ড় ঢ় য় ৎ ং ঃ ঁ
+    // Build character list context for recognition
+    final charContext = isBangla ? '''
+The drawing is a $language character. Possible characters include:
 - Bangla vowels (স্বরবর্ণ): অ আ ই ঈ উ ঊ ঋ এ ঐ ও ঔ
+- Bangla consonants (ব্যঞ্জনবর্ণ): ক খ গ ঘ ঙ চ ছ জ ঝ ঞ ট ঠ ড ঢ ণ ত থ দ ধ ন প ফ ব ভ ম য র ল শ ষ স হ ড় ঢ় য় ৎ ং ঃ ঁ
 - Bangla digits: ০ ১ ২ ৩ ৪ ৫ ৬ ৭ ৮ ৯
-- WARNING: Some Bangla letters look similar to Bangla digits but they are DIFFERENT:
-  * ছ (cho, consonant) vs ৫ (5, digit) - these look similar but are different!
-  * ৯ (9, digit) vs ৯ - context matters
-- If the target character is a Bangla LETTER, recognize the drawing as a LETTER, NOT a digit
-- If the target character is a Bangla DIGIT, recognize the drawing as a DIGIT
-- The "character" field in your response MUST be a Bangla character from the lists above, matching the type (letter vs digit) of the target''' : '';
+WARNING: Some Bangla letters look similar to digits but are different (e.g. ছ vs ৫).''' : '''
+The drawing is a $language character (A-Z, a-z, or 0-9).''';
 
     if (guideCharacter != null) {
-      return '''You are a strict but fair handwriting recognition expert helping a child learn to write correctly. The child is trying to draw the $language character "$guideCharacter".
+      return '''You are a handwriting recognition system. A child drew a character on a white canvas. The image shows colored strokes on a white background.
 
-IMPORTANT: Carefully analyze the handwritten drawing in the image and determine:
-1. What character did the child actually draw? (MUST be a $language character)
-2. Does it structurally match the target character "$guideCharacter"?
-3. How accurate/confident is the match (0.0 to 1.0)?
-$banglaContext
+YOUR TASK: Identify what character the child drew and rate the drawing quality.
+$charContext
 
-Respond ONLY with valid JSON in this exact format:
+IMPORTANT: You do NOT know what the child was trying to draw. Just look at the strokes and identify the character based purely on what you see.
+
+RESPOND ONLY with valid JSON:
 {
-  "character": "the character you actually see in the drawing",
-  "is_match": true or false,
-  "feedback": "encouraging feedback for the child",
-  "confidence": 0.0 to 1.0
+  "character": "the single character you recognize",
+  "neatness_score": 1 to 10,
+  "feedback": "specific tips to improve"
 }
 
-EVALUATION GUIDELINES (BE STRICT):
-- The child is specifically practicing "$guideCharacter" - evaluate how well they drew THIS character
-- "character" should be the character you ACTUALLY recognize from the drawing, NOT just "$guideCharacter" by default
-- Evaluate the STRUCTURAL ACCURACY of the drawing:
-  * Are the key strokes and curves of "$guideCharacter" present?
-  * Is the overall structure and proportion correct?
-  * Are the distinct parts of the character properly formed?
-- "is_match" should be TRUE only if the drawing clearly shows the key structural elements of "$guideCharacter" with reasonable accuracy
-- "is_match" should be FALSE if:
-  * The drawing is missing key structural parts of "$guideCharacter"
-  * The strokes are in wrong positions or directions
-  * The drawing looks like a different character
-  * The drawing is just random scribbles or lines
-  * The drawing is too messy to be recognized as "$guideCharacter"
-- "confidence" scoring:
-  * 0.9-1.0: Excellent, very clear and well-formed "$guideCharacter"
-  * 0.7-0.89: Good attempt, recognizable as "$guideCharacter" with minor issues
-  * 0.5-0.69: Mediocre attempt, somewhat recognizable but significant issues
-  * 0.3-0.49: Poor attempt, barely recognizable
-  * 0.0-0.29: Not recognizable as "$guideCharacter"
-- Set is_match to true ONLY when confidence is 0.5 or above
-- Do NOT be overly lenient - the goal is to help the child learn proper handwriting
-
-FEEDBACK GUIDELINES:
-- If is_match is TRUE and confidence >= 0.8: Praise them enthusiastically! ("Great job!", "Perfect!", "You did it!")
-- If is_match is TRUE and confidence < 0.8: Praise with tips ("Good work! Try to make the curves smoother next time!")
-- If is_match is FALSE: Be encouraging but clear ("Good try! Let's try $guideCharacter again! Focus on the shape.")
-- Keep feedback simple and kid-friendly (ages 4-10)
-- Use positive language even for mistakes
-
-The "character" field MUST be a single $language character or "?" if unrecognizable.''';
+RULES:
+- "character": The single character you actually see in the drawing. Must be one of the characters listed above. If unrecognizable, put "?".
+- "neatness_score" (1-10): How clean and well-formed is the drawing?
+  * 9-10: Very clean, smooth, well-proportioned
+  * 7-8: Clearly readable with minor wobbles
+  * 5-6: Readable but messy/rough
+  * 3-4: Barely readable, very messy
+  * 1-2: Unreadable scribbles
+- "feedback": Short, specific tip for the child to improve their handwriting. Keep it kid-friendly.
+- Be HONEST about what character you see. Do NOT guess - if it is unclear, say "?".''';
     } else {
-      return '''Analyze this handwritten character drawing.
+      return '''Identify the handwritten character in this image. Colored strokes on white background.
+$charContext
 
-Recognize the character and provide encouraging feedback for a child learning to write.
-$banglaContext
-
-Respond ONLY with valid JSON in this exact format:
+Respond ONLY with valid JSON:
 {
-  "character": "the single character you recognized",
-  "is_match": true,
-  "feedback": "encouraging, kid-friendly feedback",
-  "confidence": 0.85
-}
-
-The character should be a single $language character or number (0-9, A-Z, a-z${isBangla ? ', or Bengali/Bangla character' : ''}).
-Be very encouraging and positive in your feedback!
-If the drawing is unclear, set character to "?" and confidence to a low value.''';
+  "character": "?",
+  "neatness_score": 1,
+  "feedback": "Please select a guide character first!"
+}''';
     }
   }
 

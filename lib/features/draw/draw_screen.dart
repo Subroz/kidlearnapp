@@ -23,9 +23,9 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
   final List<DrawnLine> _lines = [];
   Color _selectedColor = AppTheme.primaryPurple;
   double _strokeWidth = 5.0;
-  String? _guideCharacter;
-  bool _showGuide = false;
-  int _selectedGuideCategory = 0; // 0=None, 1=English, 2=Bangla Vowels, 3=Bangla Consonants, 4=Numbers
+  String _guideCharacter = EnglishAlphabetData.letters.first.letter;
+  bool _showGuide = true;
+  int _selectedGuideCategory = 1; // 1=English, 2=Bangla Vowels, 3=Bangla Consonants, 4=Numbers
 
   // Recognition state
   final GlobalKey _canvasKey = GlobalKey();
@@ -82,19 +82,21 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
     Haptics.medium();
   }
 
-  void _setGuide(String? character) {
+  void _setGuide(String character) {
     setState(() {
       _guideCharacter = character;
-      _showGuide = character != null;
+      _showGuide = true;
     });
   }
 
   void _setGuideCategory(int category) {
     setState(() {
       _selectedGuideCategory = category;
-      if (category == 0) {
-        _guideCharacter = null;
-        _showGuide = false;
+      // Auto-select the first character of the new category
+      final chars = _getGuideCharactersForCategory(category);
+      if (chars.isNotEmpty) {
+        _guideCharacter = chars.first;
+        _showGuide = true;
       }
     });
   }
@@ -111,7 +113,8 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
           as RenderRepaintBoundary?;
       if (boundary == null) return null;
 
-      final rawImage = await boundary.toImage(pixelRatio: 2.0);
+      // Use higher pixel ratio for better AI recognition quality
+      final rawImage = await boundary.toImage(pixelRatio: 3.0);
 
       // Composite onto a white background for better AI recognition
       final width = rawImage.width;
@@ -135,12 +138,7 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
   }
 
   bool _shouldUseBangla() {
-    // If guide is selected and is Bangla character
-    if (_guideCharacter != null) {
-      return _isBanglaCharacter(_guideCharacter!);
-    }
-    // Otherwise use app language
-    return ref.read(languageProvider) == AppLanguage.bangla;
+    return _isBanglaCharacter(_guideCharacter);
   }
 
   bool _isBanglaCharacter(String char) {
@@ -190,11 +188,10 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
   void _showRecognitionDialog(HandwritingResult result) {
     final language = ref.read(languageProvider);
     final isBangla = language == AppLanguage.bangla;
-    final hasGuide = _guideCharacter != null;
 
-    // Determine if the answer is correct using the AI's isMatch field AND confidence threshold
-    // Require at least 0.5 confidence even if AI says is_match is true
-    final isCorrect = hasGuide ? (result.isMatch && result.confidence >= 0.5) : true;
+    // isMatch is computed by blind recognition: AI identifies character without 
+    // knowing the target, then client compares recognized vs expected
+    final isCorrect = result.isMatch;
     final resultColor = isCorrect ? AppTheme.primaryGreen : AppTheme.primaryRed;
 
     showDialog(
@@ -240,131 +237,117 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
             const SizedBox(height: AppTheme.spacingLg),
 
             // Show what was drawn vs expected
-            if (hasGuide) ...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // What was drawn
-                  Column(
-                    children: [
-                      Text(
-                        isBangla ? 'তুমি এঁকেছ' : 'You drew',
-                        style: const TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppTheme.textSecondary,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // What was drawn
+                Column(
+                  children: [
+                    Text(
+                      isBangla ? 'তুমি এঁকেছ' : 'You drew',
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: (isCorrect
+                                ? AppTheme.primaryGreen
+                                : AppTheme.primaryOrange)
+                            .withValues(alpha: 0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusLg),
+                        border: Border.all(
+                          color: isCorrect
+                              ? AppTheme.primaryGreen
+                              : AppTheme.primaryOrange,
+                          width: 2,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: (isCorrect
-                                  ? AppTheme.primaryGreen
-                                  : AppTheme.primaryOrange)
-                              .withValues(alpha: 0.1),
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.radiusLg),
-                          border: Border.all(
+                      child: Center(
+                        child: Text(
+                          result.character,
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 36,
+                            fontWeight: FontWeight.w800,
                             color: isCorrect
                                 ? AppTheme.primaryGreen
                                 : AppTheme.primaryOrange,
-                            width: 2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            result.character,
-                            style: TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: 36,
-                              fontWeight: FontWeight.w800,
-                              color: isCorrect
-                                  ? AppTheme.primaryGreen
-                                  : AppTheme.primaryOrange,
-                            ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-
-                  // Arrow or comparison
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
-                    child: Icon(
-                      isCorrect ? Icons.check_rounded : Icons.compare_arrows_rounded,
-                      color: AppTheme.textSecondary,
-                      size: 24,
                     ),
-                  ),
-
-                  // Expected character
-                  Column(
-                    children: [
-                      Text(
-                        isBangla ? 'গাইড ছিল' : 'Expected',
-                        style: const TextStyle(
-                          fontFamily: 'Nunito',
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppTheme.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryBlue.withValues(alpha: 0.1),
-                          borderRadius:
-                              BorderRadius.circular(AppTheme.radiusLg),
-                          border: Border.all(
-                            color: AppTheme.primaryBlue,
-                            width: 2,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            _guideCharacter!,
-                            style: const TextStyle(
-                              fontFamily: 'Nunito',
-                              fontSize: 36,
-                              fontWeight: FontWeight.w800,
-                              color: AppTheme.primaryBlue,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppTheme.spacingLg),
-            ] else ...[
-              // No guide - just show recognized character
-              Text(
-                result.character,
-                style: const TextStyle(
-                  fontFamily: 'Nunito',
-                  fontSize: 100,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.primaryGreen,
+                  ],
                 ),
-              ),
-              const SizedBox(height: AppTheme.spacingMd),
-            ],
 
-            // Stars for confidence
+                // Arrow or comparison
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppTheme.spacingMd),
+                  child: Icon(
+                    isCorrect ? Icons.check_rounded : Icons.compare_arrows_rounded,
+                    color: AppTheme.textSecondary,
+                    size: 24,
+                  ),
+                ),
+
+                // Expected character
+                Column(
+                  children: [
+                    Text(
+                      isBangla ? 'গাইড ছিল' : 'Expected',
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppTheme.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.1),
+                        borderRadius:
+                            BorderRadius.circular(AppTheme.radiusLg),
+                        border: Border.all(
+                          color: AppTheme.primaryBlue,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _guideCharacter,
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontSize: 36,
+                            fontWeight: FontWeight.w800,
+                            color: AppTheme.primaryBlue,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.spacingLg),
+
+            // Stars based on average score
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                result.confidence >= 0.8
+                result.confidence >= 0.7
                     ? 3
-                    : result.confidence >= 0.6
+                    : result.confidence >= 0.5
                         ? 2
                         : 1,
                 (index) => const Icon(
@@ -446,7 +429,7 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
       case 4:
         return _numbers;
       default:
-        return [];
+        return _englishLetters;
     }
   }
 
@@ -548,10 +531,10 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
               child: Stack(
                 children: [
                   // Guide Character
-                  if (_showGuide && _guideCharacter != null)
+                  if (_showGuide)
                     Center(
                       child: Text(
-                        _guideCharacter!,
+                        _guideCharacter,
                         style: TextStyle(
                           fontFamily: 'Nunito',
                           fontSize: 300,
@@ -706,13 +689,6 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
                     child: Row(
                       children: [
                         _GuideCategoryTab(
-                          label: isBangla ? 'গাইড বন্ধ' : 'No Guide',
-                          isSelected: _selectedGuideCategory == 0,
-                          color: AppTheme.textSecondary,
-                          onTap: () => _setGuideCategory(0),
-                        ),
-                        const SizedBox(width: AppTheme.spacingSm),
-                        _GuideCategoryTab(
                           label: 'A-Z',
                           isSelected: _selectedGuideCategory == 1,
                           color: AppTheme.primaryBlue,
@@ -743,33 +719,30 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
                     ),
                   ),
 
-                  // Guide Characters Grid (when a category is selected)
-                  if (_selectedGuideCategory > 0) ...[
-                    const SizedBox(height: AppTheme.spacingMd),
-                    SizedBox(
-                      height: 50,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: _getGuideCharactersForCategory(
-                                  _selectedGuideCategory)
-                              .map(
-                            (char) => Padding(
-                              padding: const EdgeInsets.only(
-                                  right: AppTheme.spacingXs),
-                              child: _GuideButton(
-                                label: char,
-                                isSelected:
-                                    _showGuide && _guideCharacter == char,
-                                color: _getCategoryColor(_selectedGuideCategory),
-                                onTap: () => _setGuide(char),
-                              ),
+                  // Guide Characters Grid
+                  const SizedBox(height: AppTheme.spacingMd),
+                  SizedBox(
+                    height: 50,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: _getGuideCharactersForCategory(
+                                _selectedGuideCategory)
+                            .map(
+                          (char) => Padding(
+                            padding: const EdgeInsets.only(
+                                right: AppTheme.spacingXs),
+                            child: _GuideButton(
+                              label: char,
+                              isSelected: _guideCharacter == char,
+                              color: _getCategoryColor(_selectedGuideCategory),
+                              onTap: () => _setGuide(char),
                             ),
-                          ).toList(),
-                        ),
+                          ),
+                        ).toList(),
                       ),
                     ),
-                  ],
+                  ),
                 ],
               ),
             ),
@@ -931,13 +904,24 @@ class DrawingPainter extends CustomPainter {
 
       if (line.points.length == 1) {
         canvas.drawCircle(line.points.first, line.strokeWidth / 2, paint);
+      } else if (line.points.length == 2) {
+        canvas.drawLine(line.points[0], line.points[1], paint);
       } else {
+        // Use quadratic bezier curves for smooth strokes
         final path = Path();
         path.moveTo(line.points.first.dx, line.points.first.dy);
 
-        for (int i = 1; i < line.points.length; i++) {
-          path.lineTo(line.points[i].dx, line.points[i].dy);
+        for (int i = 1; i < line.points.length - 1; i++) {
+          final midX = (line.points[i].dx + line.points[i + 1].dx) / 2;
+          final midY = (line.points[i].dy + line.points[i + 1].dy) / 2;
+          path.quadraticBezierTo(
+            line.points[i].dx, line.points[i].dy,
+            midX, midY,
+          );
         }
+        // Draw to the last point
+        final last = line.points.last;
+        path.lineTo(last.dx, last.dy);
 
         canvas.drawPath(path, paint);
       }
