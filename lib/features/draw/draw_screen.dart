@@ -192,8 +192,9 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
     final isBangla = language == AppLanguage.bangla;
     final hasGuide = _guideCharacter != null;
 
-    // Determine if the answer is correct using the AI's isMatch field
-    final isCorrect = hasGuide ? result.isMatch : true;
+    // Determine if the answer is correct using the AI's isMatch field AND confidence threshold
+    // Require at least 0.5 confidence even if AI says is_match is true
+    final isCorrect = hasGuide ? (result.isMatch && result.confidence >= 0.5) : true;
     final resultColor = isCorrect ? AppTheme.primaryGreen : AppTheme.primaryRed;
 
     showDialog(
