@@ -37,7 +37,6 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
   late AnimationController _beeController;
   late AnimationController _celebrationController;
   late Animation<double> _beeAnimation;
-  late Animation<double> _celebrationAnimation;
 
   @override
   void initState() {
@@ -61,9 +60,6 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
       vsync: this,
     );
 
-    _celebrationAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _celebrationController, curve: Curves.elasticOut),
-    );
   }
 
   @override
@@ -430,38 +426,6 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
   void _stopVoiceInput() {
     _speechService.stopListening();
     setState(() => _isListening = false);
-  }
-
-  void _showDifficultyChangeDialog(SpellingDifficulty newDifficulty, bool isBangla) {
-    final levelName = switch (newDifficulty) {
-      SpellingDifficulty.easy => isBangla ? 'সহজ' : 'Easy',
-      SpellingDifficulty.medium => isBangla ? 'মাঝারি' : 'Medium',
-      SpellingDifficulty.hard => isBangla ? 'কঠিন' : 'Hard',
-    };
-
-    final isLevelUp = newDifficulty.index > _gameState.currentDifficulty.index;
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              isLevelUp ? Icons.trending_up_rounded : Icons.trending_down_rounded,
-              color: Colors.white,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              isLevelUp
-                  ? (isBangla ? 'দারুণ! এখন $levelName লেভেল!' : 'Great! Now at $levelName level!')
-                  : (isBangla ? '$levelName লেভেলে অনুশীলন করো' : 'Practice at $levelName level'),
-              style: const TextStyle(fontFamily: 'Nunito', fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-        backgroundColor: isLevelUp ? AppTheme.primaryGreen : AppTheme.primaryOrange,
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   @override
