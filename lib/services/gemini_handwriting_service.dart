@@ -29,10 +29,10 @@ class HandwritingResult {
     this.hint,
   });
 
-  factory HandwritingResult.fromJson(Map<String, dynamic> json, {String? guideCharacter}) {
+  factory HandwritingResult.fromJson(Map<String, dynamic> json, {String? guideCharacter, bool isBangla = false}) {
     final character = (json['character'] ?? '?').toString().trim();
     final neatness = (json['neatness_score'] ?? 5).toInt().clamp(1, 10);
-    final aiFeedback = (json['feedback'] ?? 'Keep practicing!').toString();
+    final aiFeedback = (json['feedback'] ?? (isBangla ? 'আবার চেষ্টা করো!' : 'Keep practicing!')).toString();
     final confidence = (neatness / 10.0).clamp(0.0, 1.0);
 
     bool isMatch = false;
@@ -46,10 +46,12 @@ class HandwritingResult {
       } else {
         isClose = _areSimilarCharacters(character, guideCharacter);
         if (isClose) {
-          hint = _getSimilarityHint(character, guideCharacter);
+          hint = _getSimilarityHint(character, guideCharacter, isBangla: isBangla);
         }
         if (_feedbackSoundsPositive(aiFeedback)) {
-          feedback = 'Your drawing looks like "$character" but you were trying to draw "$guideCharacter". Look at the guide and try again!';
+          feedback = isBangla
+              ? 'তোমার আঁকা "$character" এর মতো দেখাচ্ছে, কিন্তু তুমি "$guideCharacter" আঁকতে চেয়েছিলে। গাইড দেখে আবার চেষ্টা করো!'
+              : 'Your drawing looks like "$character" but you were trying to draw "$guideCharacter". Look at the guide and try again!';
         }
       }
     }
@@ -130,42 +132,45 @@ class HandwritingResult {
     return false;
   }
 
-  static String? _getSimilarityHint(String recognized, String expected) {
-    final banglaHints = <String, Map<String, String>>{
-      'ক': {'ফ': 'ক has a shorter tail than ফ'},
-      'ফ': {'ক': 'ফ has a longer tail going down'},
-      'ঘ': {'ধ': 'ঘ has a dot on top, ধ does not'},
-      'থ': {'ধ': 'থ has a straight line, ধ has a curve'},
-      'চ': {'ব': 'চ curves to the left, ব curves to the right'},
-      'ছ': {'৫': 'ছ is a letter, ৫ is the number 5'},
-      'জ': {'ঝ': 'ঝ has an extra hook at the bottom'},
-      'ট': {'ড': 'ড has a dot underneath'},
-      'ঠ': {'ঢ': 'ঢ has a dot underneath'},
-      'ত': {'ন': 'ন has a longer bottom stroke'},
-      'দ': {'ল': 'দ has a rounded top, ল is more angular'},
-      'প': {'শ': 'প has one curve, শ has extra lines'},
-      'ভ': {'ম': 'ভ has a dot, ম does not'},
-      'ম': {'ভ': 'ম has no dot, ভ has one'},
-      'অ': {'আ': 'আ has an extra vertical line on the right'},
-      'ই': {'ঈ': 'ঈ has an extra mark at the bottom'},
-      'উ': {'ঊ': 'ঊ has an extra curve at the bottom'},
-      'ঊ': {'ছ': 'ঊ has a longer bottom curve, ছ has a more angular shape'},
-      'ছ': {'ঊ': 'ছ is more angular on top, ঊ has a smoother flowing curve'},
-      'এ': {'ঐ': 'ঐ has an extra mark on top'},
-      'ও': {'ঔ': 'ঔ has an extra mark on top'},
+  static String? _getSimilarityHint(String recognized, String expected, {bool isBangla = false}) {
+    final hints = <String, Map<String, List<String>>>{
+      'ক': {'ফ': ['ক-এর লেজ ফ-এর চেয়ে ছোট', 'ক has a shorter tail than ফ']},
+      'ফ': {'ক': ['ফ-এর লেজ নিচে লম্বা', 'ফ has a longer tail going down']},
+      'ঘ': {'ধ': ['ঘ-এর উপরে বিন্দু আছে, ধ-তে নেই', 'ঘ has a dot on top, ধ does not']},
+      'থ': {'ধ': ['থ-তে সোজা লাইন, ধ-তে বাঁকা', 'থ has a straight line, ধ has a curve']},
+      'চ': {'ব': ['চ বাঁদিকে বাঁকে, ব ডানদিকে বাঁকে', 'চ curves to the left, ব curves to the right']},
+      'ছ': {'৫': ['ছ একটি অক্ষর, ৫ হলো সংখ্যা ৫', 'ছ is a letter, ৫ is the number 5'], 'ঊ': ['ছ উপরে কোণাকুণি, ঊ নরম বাঁকা', 'ছ is more angular on top, ঊ has a smoother curve']},
+      'জ': {'ঝ': ['ঝ-এর নিচে বাড়তি হুক আছে', 'ঝ has an extra hook at the bottom']},
+      'ট': {'ড': ['ড-এর নিচে বিন্দু আছে', 'ড has a dot underneath']},
+      'ঠ': {'ঢ': ['ঢ-এর নিচে বিন্দু আছে', 'ঢ has a dot underneath']},
+      'ত': {'ন': ['ন-এর নিচের দাগ লম্বা', 'ন has a longer bottom stroke']},
+      'দ': {'ল': ['দ-এর উপর গোল, ল কোণাকুণি', 'দ has a rounded top, ল is more angular']},
+      'প': {'শ': ['প-তে একটি বাঁক, শ-তে বাড়তি লাইন', 'প has one curve, শ has extra lines']},
+      'ভ': {'ম': ['ভ-তে বিন্দু আছে, ম-তে নেই', 'ভ has a dot, ম does not']},
+      'ম': {'ভ': ['ম-তে বিন্দু নেই, ভ-তে আছে', 'ম has no dot, ভ has one']},
+      'অ': {'আ': ['আ-তে ডানদিকে বাড়তি লাইন আছে', 'আ has an extra vertical line on the right']},
+      'ই': {'ঈ': ['ঈ-এর নিচে বাড়তি চিহ্ন আছে', 'ঈ has an extra mark at the bottom']},
+      'উ': {'ঊ': ['ঊ-এর নিচে বাড়তি বাঁক আছে', 'ঊ has an extra curve at the bottom']},
+      'ঊ': {'ছ': ['ঊ-এর নিচে লম্বা বাঁক, ছ বেশি কোণাকুণি', 'ঊ has a longer bottom curve, ছ is more angular']},
+      'এ': {'ঐ': ['ঐ-এর উপরে বাড়তি চিহ্ন আছে', 'ঐ has an extra mark on top']},
+      'ও': {'ঔ': ['ঔ-এর উপরে বাড়তি চিহ্ন আছে', 'ঔ has an extra mark on top']},
     };
 
+    final idx = isBangla ? 0 : 1;
+
     final key = recognized;
-    if (banglaHints.containsKey(key) && banglaHints[key]!.containsKey(expected)) {
-      return banglaHints[key]![expected];
+    if (hints.containsKey(key) && hints[key]!.containsKey(expected)) {
+      return hints[key]![expected]![idx];
     }
 
     final reverseKey = expected;
-    if (banglaHints.containsKey(reverseKey) && banglaHints[reverseKey]!.containsKey(recognized)) {
-      return banglaHints[reverseKey]![recognized];
+    if (hints.containsKey(reverseKey) && hints[reverseKey]!.containsKey(recognized)) {
+      return hints[reverseKey]![recognized]![idx];
     }
 
-    return 'Look carefully at the shape — your drawing looks like "$recognized" but should be "$expected"';
+    return isBangla
+        ? 'ভালো করে দেখো — তোমার আঁকা "$recognized" এর মতো, কিন্তু "$expected" হওয়া উচিত'
+        : 'Look carefully at the shape — your drawing looks like "$recognized" but should be "$expected"';
   }
 }
 
@@ -310,7 +315,7 @@ Respond ONLY with valid JSON. No extra text.''';
       return null;
     }
 
-    return _parseJsonResponse(content, guideCharacter, 'OpenAI');
+    return _parseJsonResponse(content, guideCharacter, 'OpenAI', isBangla: isBangla);
   }
 
   Future<HandwritingResult?> _recognizeWithGemini(
@@ -337,10 +342,10 @@ Respond ONLY with valid JSON. No extra text.''';
       return null;
     }
 
-    return _parseJsonResponse(response.text!, guideCharacter, 'Gemini');
+    return _parseJsonResponse(response.text!, guideCharacter, 'Gemini', isBangla: isBangla);
   }
 
-  HandwritingResult? _parseJsonResponse(String text, String? guideCharacter, String source) {
+  HandwritingResult? _parseJsonResponse(String text, String? guideCharacter, String source, {bool isBangla = false}) {
     try {
       String jsonString = text;
 
@@ -352,7 +357,7 @@ Respond ONLY with valid JSON. No extra text.''';
 
       final json = jsonDecode(jsonString.trim());
       debugPrint('GeminiHandwritingService: $source recognition successful!');
-      return HandwritingResult.fromJson(json, guideCharacter: guideCharacter);
+      return HandwritingResult.fromJson(json, guideCharacter: guideCharacter, isBangla: isBangla);
     } catch (e) {
       debugPrint('GeminiHandwritingService: $source JSON parse error: $e');
       return _parseTextResponse(text, guideCharacter);
@@ -421,9 +426,9 @@ SCORING GUIDE (be lenient for children):
   * 3-4: Needs practice - hard to read
   * 1-2: Just scribbles
 - "feedback": Your feedback MUST consider that the child was trying to draw "$guideCharacter".
+  * ${isBangla ? 'Write the feedback in BANGLA (বাংলা). Use simple Bangla words a young child can understand.' : 'Write the feedback in English. Use simple words a young child can understand.'}
   * If the drawing matches "$guideCharacter": praise them with a specific tip to improve.
-  * If the drawing looks like a DIFFERENT character: explain kindly what part to change. For example: "Your drawing looks a bit like X. Try adding/changing [specific part] to make it look more like $guideCharacter!"
-  * Keep feedback simple — use words a young child can understand.''';
+  * If the drawing looks like a DIFFERENT character: explain kindly what part to change.${isBangla ? ' Example: "তোমার আঁকা দেখতে X এর মতো লাগছে। $guideCharacter বানাতে [নির্দিষ্ট অংশ] একটু বদলাও!"' : ' Example: "Your drawing looks a bit like X. Try adding/changing [specific part] to make it look more like $guideCharacter!"'}''';
     } else {
       return '''Identify the handwritten character in this image. Colored strokes on white background.
 $charContext
