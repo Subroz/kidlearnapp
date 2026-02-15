@@ -201,6 +201,8 @@ class LetterDetailScreen extends ConsumerWidget {
                         child: _ExampleWordCard(
                           word: example.word,
                           meaning: example.meaning,
+                          emoji: example.emoji,
+                          sentence: example.sentence,
                           color: color,
                           onSpeak: () =>
                               speechService.speakWord(example.word, isBangla: isBangla),
@@ -221,12 +223,16 @@ class LetterDetailScreen extends ConsumerWidget {
 class _ExampleWordCard extends StatelessWidget {
   final String word;
   final String meaning;
+  final String emoji;
+  final String sentence;
   final Color color;
   final VoidCallback onSpeak;
 
   const _ExampleWordCard({
     required this.word,
     required this.meaning,
+    this.emoji = '',
+    this.sentence = '',
     required this.color,
     required this.onSpeak,
   });
@@ -242,6 +248,23 @@ class _ExampleWordCard extends StatelessWidget {
       ),
       child: Row(
         children: [
+          if (emoji.isNotEmpty) ...[
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+              ),
+              child: Center(
+                child: Text(
+                  emoji,
+                  style: const TextStyle(fontSize: 28),
+                ),
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,21 +273,44 @@ class _ExampleWordCard extends StatelessWidget {
                   word,
                   style: TextStyle(
                     fontFamily: 'Nunito',
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: color,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   meaning,
                   style: const TextStyle(
                     fontFamily: 'Nunito',
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: AppTheme.textSecondary,
                   ),
                 ),
+                if (sentence.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppTheme.spacingSm,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Text(
+                      sentence,
+                      style: TextStyle(
+                        fontFamily: 'Nunito',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        fontStyle: FontStyle.italic,
+                        color: color.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
