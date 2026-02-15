@@ -32,12 +32,13 @@ class HandwritingResult {
   factory HandwritingResult.fromJson(Map<String, dynamic> json, {String? guideCharacter}) {
     final character = (json['character'] ?? '?').toString().trim();
     final neatness = (json['neatness_score'] ?? 5).toInt().clamp(1, 10);
-    final feedback = (json['feedback'] ?? 'Keep practicing!').toString();
+    final aiFeedback = (json['feedback'] ?? 'Keep practicing!').toString();
     final confidence = (neatness / 10.0).clamp(0.0, 1.0);
 
     bool isMatch = false;
     bool isClose = false;
     String? hint;
+    String feedback = aiFeedback;
 
     if (guideCharacter != null && character != '?') {
       if (character == guideCharacter) {
@@ -46,6 +47,9 @@ class HandwritingResult {
         isClose = _areSimilarCharacters(character, guideCharacter);
         if (isClose) {
           hint = _getSimilarityHint(character, guideCharacter);
+        }
+        if (_feedbackSoundsPositive(aiFeedback)) {
+          feedback = 'Your drawing looks like "$character" but you were trying to draw "$guideCharacter". Look at the guide and try again!';
         }
       }
     }
@@ -62,6 +66,18 @@ class HandwritingResult {
       isClose: isClose,
       hint: hint,
     );
+  }
+
+  static bool _feedbackSoundsPositive(String feedback) {
+    final lower = feedback.toLowerCase();
+    return lower.contains('great job') ||
+        lower.contains('wonderful') ||
+        lower.contains('excellent') ||
+        lower.contains('perfect') ||
+        lower.contains('amazing') ||
+        lower.contains('fantastic') ||
+        lower.contains('well done') ||
+        lower.contains('awesome');
   }
 
   static bool _areSimilarCharacters(String a, String b) {
@@ -93,6 +109,7 @@ class HandwritingResult {
       {'অ', 'আ'},
       {'ই', 'ঈ'},
       {'উ', 'ঊ'},
+      {'ঊ', 'ছ'},
       {'এ', 'ঐ'},
       {'ও', 'ঔ'},
       {'০', 'ও'},
@@ -132,6 +149,8 @@ class HandwritingResult {
       'অ': {'আ': 'আ has an extra vertical line on the right'},
       'ই': {'ঈ': 'ঈ has an extra mark at the bottom'},
       'উ': {'ঊ': 'ঊ has an extra curve at the bottom'},
+      'ঊ': {'ছ': 'ঊ has a longer bottom curve, ছ has a more angular shape'},
+      'ছ': {'ঊ': 'ছ is more angular on top, ঊ has a smoother flowing curve'},
       'এ': {'ঐ': 'ঐ has an extra mark on top'},
       'ও': {'ঔ': 'ঔ has an extra mark on top'},
     };
@@ -372,8 +391,9 @@ IMPORTANT DISTINCTIONS:
 
     if (guideCharacter != null) {
       return '''A young child (ages 3-7) drew a character on a white canvas using colored strokes. This is their handwriting practice.
+The child is TRYING to draw: "$guideCharacter"
 
-YOUR TASK: Identify what character the child drew and rate the drawing quality.
+YOUR TASK: Identify what character the child actually drew and rate the drawing quality.
 $charContext
 
 ANALYSIS STEPS:
@@ -381,6 +401,7 @@ ANALYSIS STEPS:
 2. Count the major strokes and their directions
 3. Compare against known character shapes
 4. Pick the BEST matching character from the list above
+5. Compare what you see against the target character "$guideCharacter"
 
 RESPOND ONLY with valid JSON:
 {
@@ -390,15 +411,19 @@ RESPOND ONLY with valid JSON:
 }
 
 SCORING GUIDE (be lenient for children):
-- "character": The character you see. Must be from the list above. Use "?" only if truly unrecognizable.
+- "character": The character you ACTUALLY see in the drawing. Must be from the list above. Use "?" only if truly unrecognizable.
+  * Be HONEST — report what the drawing looks like, NOT what the child intended.
+  * If it looks like "$guideCharacter", say "$guideCharacter". If it looks like a different character, say that character.
 - "neatness_score" (1-10): Rate for a CHILD's ability level.
   * 9-10: Excellent for a child - clear and well-formed
   * 7-8: Good - clearly readable with some wobbles
   * 5-6: Okay - recognizable but messy
   * 3-4: Needs practice - hard to read
   * 1-2: Just scribbles
-- "feedback": Give one specific, encouraging tip. Use simple words a child can understand. Example: "Try to make the round part bigger!" or "Great curves! Make the line a bit straighter next time."
-- Be HONEST about what character you see. Do NOT guess or assume what they intended.''';
+- "feedback": Your feedback MUST consider that the child was trying to draw "$guideCharacter".
+  * If the drawing matches "$guideCharacter": praise them with a specific tip to improve.
+  * If the drawing looks like a DIFFERENT character: explain kindly what part to change. For example: "Your drawing looks a bit like X. Try adding/changing [specific part] to make it look more like $guideCharacter!"
+  * Keep feedback simple — use words a young child can understand.''';
     } else {
       return '''Identify the handwritten character in this image. Colored strokes on white background.
 $charContext
