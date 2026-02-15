@@ -36,6 +36,13 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
     });
   }
 
+  void _toggleLanguage() {
+    ref.read(languageProvider.notifier).toggleLanguage();
+    setState(() {
+      _selectedWords.clear();
+    });
+  }
+
   Future<void> _generateStory() async {
     if (_selectedWords.length < 3) return;
 
@@ -107,6 +114,7 @@ class _StoryScreenState extends ConsumerState<StoryScreen> {
                   language: language,
                   onToggleWord: _toggleWord,
                   onGenerate: _generateStory,
+                  onToggleLanguage: _toggleLanguage,
                 ),
         ),
       ),
@@ -120,6 +128,7 @@ class _WordSelector extends StatelessWidget {
   final AppLanguage language;
   final Function(String) onToggleWord;
   final VoidCallback onGenerate;
+  final VoidCallback onToggleLanguage;
 
   const _WordSelector({
     required this.selectedWords,
@@ -127,6 +136,7 @@ class _WordSelector extends StatelessWidget {
     required this.language,
     required this.onToggleWord,
     required this.onGenerate,
+    required this.onToggleLanguage,
   });
 
   @override
@@ -158,6 +168,52 @@ class _WordSelector extends StatelessWidget {
                 ),
               ),
               const Spacer(),
+              GestureDetector(
+                onTap: onToggleLanguage,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusFull),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        isBangla ? '🇧🇩' : '🇺🇸',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        isBangla ? 'বাং' : 'EN',
+                        style: const TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.swap_horiz_rounded,
+                        size: 16,
+                        color: AppTheme.textSecondary,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppTheme.spacingSm),
               // Selected count badge
               Container(
                 padding: const EdgeInsets.symmetric(
