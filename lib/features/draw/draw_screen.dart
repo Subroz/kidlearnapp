@@ -189,10 +189,13 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
     final language = ref.read(languageProvider);
     final isBangla = language == AppLanguage.bangla;
 
-    // isMatch is computed by blind recognition: AI identifies character without 
-    // knowing the target, then client compares recognized vs expected
     final isCorrect = result.isMatch;
-    final resultColor = isCorrect ? AppTheme.primaryGreen : AppTheme.primaryRed;
+    final isClose = result.isClose;
+    final resultColor = isCorrect 
+        ? AppTheme.primaryGreen 
+        : isClose 
+            ? AppTheme.primaryOrange 
+            : AppTheme.primaryRed;
 
     showDialog(
       context: context,
@@ -203,7 +206,6 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Result Icon
             Container(
               width: 80,
               height: 80,
@@ -214,18 +216,21 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
               child: Icon(
                 isCorrect
                     ? Icons.check_circle_rounded
-                    : Icons.cancel_rounded,
+                    : isClose
+                        ? Icons.info_rounded
+                        : Icons.cancel_rounded,
                 color: resultColor,
                 size: 50,
               ),
             ),
             const SizedBox(height: AppTheme.spacingMd),
 
-            // Status text
             Text(
               isCorrect
                   ? (isBangla ? 'সঠিক!' : 'Correct!')
-                  : (isBangla ? 'আবার চেষ্টা করো!' : 'Try Again!'),
+                  : isClose
+                      ? (isBangla ? 'প্রায় হয়েছে!' : 'Almost there!')
+                      : (isBangla ? 'আবার চেষ্টা করো!' : 'Try Again!'),
               style: TextStyle(
                 fontFamily: 'Nunito',
                 fontSize: 24,
@@ -360,7 +365,6 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
 
             const SizedBox(height: AppTheme.spacingMd),
 
-            // Feedback text
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingMd),
               decoration: BoxDecoration(
@@ -378,6 +382,37 @@ class _DrawScreenState extends ConsumerState<DrawScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
+
+            if (isClose && result.hint != null) ...[
+              const SizedBox(height: AppTheme.spacingSm),
+              Container(
+                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryOrange.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  border: Border.all(
+                    color: AppTheme.primaryOrange.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.lightbulb_rounded, color: AppTheme.primaryOrange, size: 20),
+                    const SizedBox(width: AppTheme.spacingSm),
+                    Expanded(
+                      child: Text(
+                        result.hint!,
+                        style: const TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.primaryOrange,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             const SizedBox(height: AppTheme.spacingLg),
 

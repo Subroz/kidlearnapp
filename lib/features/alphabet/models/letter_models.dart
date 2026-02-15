@@ -31,11 +31,15 @@ class ExampleWord {
   final String word;
   final String meaning;
   final String? pronunciation;
+  final String emoji;
+  final String sentence;
 
   ExampleWord({
     required this.word,
     required this.meaning,
     this.pronunciation,
+    this.emoji = '',
+    this.sentence = '',
   });
 
   factory ExampleWord.fromJson(Map<String, dynamic> json) {
@@ -43,6 +47,8 @@ class ExampleWord {
       word: json['word'] ?? '',
       meaning: json['meaning'] ?? '',
       pronunciation: json['pronunciation'],
+      emoji: json['emoji'] ?? '',
+      sentence: json['sentence'] ?? '',
     );
   }
 }
@@ -57,9 +63,9 @@ class EnglishAlphabetData {
       pronunciation: 'ei',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'Apple', meaning: 'A round fruit'),
-        ExampleWord(word: 'Ant', meaning: 'A small insect'),
-        ExampleWord(word: 'Airplane', meaning: 'A flying vehicle'),
+        ExampleWord(word: 'Apple', meaning: 'A round fruit', emoji: '🍎', sentence: 'I eat a red apple.'),
+        ExampleWord(word: 'Ant', meaning: 'A small insect', emoji: '🐜', sentence: 'The ant is very small.'),
+        ExampleWord(word: 'Airplane', meaning: 'A flying vehicle', emoji: '✈️', sentence: 'The airplane flies high.'),
       ],
     ),
     Letter(
@@ -68,9 +74,9 @@ class EnglishAlphabetData {
       pronunciation: 'bee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Ball', meaning: 'A round toy'),
-        ExampleWord(word: 'Bird', meaning: 'A flying animal'),
-        ExampleWord(word: 'Banana', meaning: 'A yellow fruit'),
+        ExampleWord(word: 'Ball', meaning: 'A round toy', emoji: '⚽', sentence: 'I play with a ball.'),
+        ExampleWord(word: 'Bird', meaning: 'A flying animal', emoji: '🐦', sentence: 'The bird sings a song.'),
+        ExampleWord(word: 'Banana', meaning: 'A yellow fruit', emoji: '🍌', sentence: 'I like to eat banana.'),
       ],
     ),
     Letter(
@@ -79,9 +85,9 @@ class EnglishAlphabetData {
       pronunciation: 'see',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Cat', meaning: 'A pet animal'),
-        ExampleWord(word: 'Car', meaning: 'A vehicle'),
-        ExampleWord(word: 'Cake', meaning: 'A sweet food'),
+        ExampleWord(word: 'Cat', meaning: 'A pet animal', emoji: '🐱', sentence: 'The cat drinks milk.'),
+        ExampleWord(word: 'Car', meaning: 'A vehicle', emoji: '🚗', sentence: 'The car goes fast.'),
+        ExampleWord(word: 'Cake', meaning: 'A sweet food', emoji: '🎂', sentence: 'We eat cake on birthdays.'),
       ],
     ),
     Letter(
@@ -90,9 +96,9 @@ class EnglishAlphabetData {
       pronunciation: 'dee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Dog', meaning: 'A pet animal'),
-        ExampleWord(word: 'Duck', meaning: 'A water bird'),
-        ExampleWord(word: 'Door', meaning: 'Entry to a room'),
+        ExampleWord(word: 'Dog', meaning: 'A pet animal', emoji: '🐶', sentence: 'The dog wags its tail.'),
+        ExampleWord(word: 'Duck', meaning: 'A water bird', emoji: '🦆', sentence: 'The duck swims in the pond.'),
+        ExampleWord(word: 'Door', meaning: 'Entry to a room', emoji: '🚪', sentence: 'Please open the door.'),
       ],
     ),
     Letter(
@@ -101,9 +107,9 @@ class EnglishAlphabetData {
       pronunciation: 'e',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'Elephant', meaning: 'A big animal'),
-        ExampleWord(word: 'Egg', meaning: 'Bird\'s baby comes from this'),
-        ExampleWord(word: 'Eye', meaning: 'We see with this'),
+        ExampleWord(word: 'Elephant', meaning: 'A big animal', emoji: '🐘', sentence: 'The elephant is very big.'),
+        ExampleWord(word: 'Egg', meaning: 'Bird\'s baby comes from this', emoji: '🥚', sentence: 'I eat an egg for breakfast.'),
+        ExampleWord(word: 'Eye', meaning: 'We see with this', emoji: '👁️', sentence: 'I can see with my eye.'),
       ],
     ),
     Letter(
@@ -112,9 +118,9 @@ class EnglishAlphabetData {
       pronunciation: 'eff',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Fish', meaning: 'Lives in water'),
-        ExampleWord(word: 'Flower', meaning: 'A beautiful plant part'),
-        ExampleWord(word: 'Frog', meaning: 'Jumps and says ribbit'),
+        ExampleWord(word: 'Fish', meaning: 'Lives in water', emoji: '🐟', sentence: 'The fish lives in water.'),
+        ExampleWord(word: 'Flower', meaning: 'A beautiful plant part', emoji: '🌸', sentence: 'The flower smells nice.'),
+        ExampleWord(word: 'Frog', meaning: 'Jumps and says ribbit', emoji: '🐸', sentence: 'The frog jumps high.'),
       ],
     ),
     Letter(
@@ -123,9 +129,9 @@ class EnglishAlphabetData {
       pronunciation: 'jee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Goat', meaning: 'An animal with horns'),
-        ExampleWord(word: 'Grapes', meaning: 'Small round fruits'),
-        ExampleWord(word: 'Girl', meaning: 'A female child'),
+        ExampleWord(word: 'Goat', meaning: 'An animal with horns', emoji: '🐐', sentence: 'The goat eats grass.'),
+        ExampleWord(word: 'Grapes', meaning: 'Small round fruits', emoji: '🍇', sentence: 'I like to eat grapes.'),
+        ExampleWord(word: 'Girl', meaning: 'A female child', emoji: '👧', sentence: 'The girl reads a book.'),
       ],
     ),
     Letter(
@@ -134,9 +140,9 @@ class EnglishAlphabetData {
       pronunciation: 'aitch',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'House', meaning: 'We live here'),
-        ExampleWord(word: 'Horse', meaning: 'An animal we ride'),
-        ExampleWord(word: 'Hat', meaning: 'We wear on head'),
+        ExampleWord(word: 'House', meaning: 'We live here', emoji: '🏠', sentence: 'I live in a house.'),
+        ExampleWord(word: 'Horse', meaning: 'An animal we ride', emoji: '🐴', sentence: 'The horse runs fast.'),
+        ExampleWord(word: 'Hat', meaning: 'We wear on head', emoji: '🎩', sentence: 'I wear a hat on my head.'),
       ],
     ),
     Letter(
@@ -145,9 +151,9 @@ class EnglishAlphabetData {
       pronunciation: 'ai',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'Ice cream', meaning: 'A cold sweet'),
-        ExampleWord(word: 'Igloo', meaning: 'Ice house'),
-        ExampleWord(word: 'Island', meaning: 'Land in water'),
+        ExampleWord(word: 'Ice cream', meaning: 'A cold sweet', emoji: '🍦', sentence: 'I love ice cream.'),
+        ExampleWord(word: 'Igloo', meaning: 'Ice house', emoji: '🏔️', sentence: 'An igloo is made of ice.'),
+        ExampleWord(word: 'Island', meaning: 'Land in water', emoji: '🏝️', sentence: 'The island is in the sea.'),
       ],
     ),
     Letter(
@@ -156,9 +162,9 @@ class EnglishAlphabetData {
       pronunciation: 'jay',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Juice', meaning: 'A fruit drink'),
-        ExampleWord(word: 'Jam', meaning: 'Sweet spread'),
-        ExampleWord(word: 'Jelly', meaning: 'A wobbly sweet'),
+        ExampleWord(word: 'Juice', meaning: 'A fruit drink', emoji: '🧃', sentence: 'I drink orange juice.'),
+        ExampleWord(word: 'Jam', meaning: 'Sweet spread', emoji: '🫙', sentence: 'I put jam on bread.'),
+        ExampleWord(word: 'Jelly', meaning: 'A wobbly sweet', emoji: '🍮', sentence: 'The jelly is wobbly.'),
       ],
     ),
     Letter(
@@ -167,9 +173,9 @@ class EnglishAlphabetData {
       pronunciation: 'kay',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Kite', meaning: 'Flies in the sky'),
-        ExampleWord(word: 'King', meaning: 'A royal ruler'),
-        ExampleWord(word: 'Key', meaning: 'Opens a lock'),
+        ExampleWord(word: 'Kite', meaning: 'Flies in the sky', emoji: '🪁', sentence: 'I fly a kite in the wind.'),
+        ExampleWord(word: 'King', meaning: 'A royal ruler', emoji: '👑', sentence: 'The king wears a crown.'),
+        ExampleWord(word: 'Key', meaning: 'Opens a lock', emoji: '🔑', sentence: 'The key opens the lock.'),
       ],
     ),
     Letter(
@@ -178,9 +184,9 @@ class EnglishAlphabetData {
       pronunciation: 'ell',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Lion', meaning: 'King of the jungle'),
-        ExampleWord(word: 'Leaf', meaning: 'Part of a tree'),
-        ExampleWord(word: 'Lamp', meaning: 'Gives us light'),
+        ExampleWord(word: 'Lion', meaning: 'King of the jungle', emoji: '🦁', sentence: 'The lion roars loudly.'),
+        ExampleWord(word: 'Leaf', meaning: 'Part of a tree', emoji: '🍃', sentence: 'The leaf falls from the tree.'),
+        ExampleWord(word: 'Lamp', meaning: 'Gives us light', emoji: '💡', sentence: 'The lamp gives us light.'),
       ],
     ),
     Letter(
@@ -189,9 +195,9 @@ class EnglishAlphabetData {
       pronunciation: 'em',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Moon', meaning: 'Shines at night'),
-        ExampleWord(word: 'Monkey', meaning: 'Swings on trees'),
-        ExampleWord(word: 'Milk', meaning: 'A white drink'),
+        ExampleWord(word: 'Moon', meaning: 'Shines at night', emoji: '🌙', sentence: 'The moon shines at night.'),
+        ExampleWord(word: 'Monkey', meaning: 'Swings on trees', emoji: '🐒', sentence: 'The monkey swings on trees.'),
+        ExampleWord(word: 'Milk', meaning: 'A white drink', emoji: '🥛', sentence: 'I drink milk every day.'),
       ],
     ),
     Letter(
@@ -200,9 +206,9 @@ class EnglishAlphabetData {
       pronunciation: 'en',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Nest', meaning: 'Bird\'s home'),
-        ExampleWord(word: 'Nose', meaning: 'We smell with this'),
-        ExampleWord(word: 'Night', meaning: 'When it\'s dark'),
+        ExampleWord(word: 'Nest', meaning: 'Bird\'s home', emoji: '🪺', sentence: 'The bird lives in a nest.'),
+        ExampleWord(word: 'Nose', meaning: 'We smell with this', emoji: '👃', sentence: 'I smell with my nose.'),
+        ExampleWord(word: 'Night', meaning: 'When it\'s dark', emoji: '🌃', sentence: 'Stars come out at night.'),
       ],
     ),
     Letter(
@@ -211,9 +217,9 @@ class EnglishAlphabetData {
       pronunciation: 'oh',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'Orange', meaning: 'A citrus fruit'),
-        ExampleWord(word: 'Owl', meaning: 'A night bird'),
-        ExampleWord(word: 'Ocean', meaning: 'A big sea'),
+        ExampleWord(word: 'Orange', meaning: 'A citrus fruit', emoji: '🍊', sentence: 'The orange is sweet.'),
+        ExampleWord(word: 'Owl', meaning: 'A night bird', emoji: '🦉', sentence: 'The owl hoots at night.'),
+        ExampleWord(word: 'Ocean', meaning: 'A big sea', emoji: '🌊', sentence: 'The ocean has big waves.'),
       ],
     ),
     Letter(
@@ -222,9 +228,9 @@ class EnglishAlphabetData {
       pronunciation: 'pee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Penguin', meaning: 'A bird that swims'),
-        ExampleWord(word: 'Pizza', meaning: 'A yummy food'),
-        ExampleWord(word: 'Pencil', meaning: 'We write with this'),
+        ExampleWord(word: 'Penguin', meaning: 'A bird that swims', emoji: '🐧', sentence: 'The penguin walks on ice.'),
+        ExampleWord(word: 'Pizza', meaning: 'A yummy food', emoji: '🍕', sentence: 'I love eating pizza.'),
+        ExampleWord(word: 'Pencil', meaning: 'We write with this', emoji: '✏️', sentence: 'I write with a pencil.'),
       ],
     ),
     Letter(
@@ -233,9 +239,9 @@ class EnglishAlphabetData {
       pronunciation: 'cue',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Queen', meaning: 'A royal lady'),
-        ExampleWord(word: 'Question', meaning: 'What we ask'),
-        ExampleWord(word: 'Quilt', meaning: 'A warm blanket'),
+        ExampleWord(word: 'Queen', meaning: 'A royal lady', emoji: '👸', sentence: 'The queen lives in a castle.'),
+        ExampleWord(word: 'Question', meaning: 'What we ask', emoji: '❓', sentence: 'I ask a question to learn.'),
+        ExampleWord(word: 'Quilt', meaning: 'A warm blanket', emoji: '🛏️', sentence: 'The quilt keeps me warm.'),
       ],
     ),
     Letter(
@@ -244,9 +250,9 @@ class EnglishAlphabetData {
       pronunciation: 'are',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Rainbow', meaning: 'Colors in the sky'),
-        ExampleWord(word: 'Rabbit', meaning: 'A hopping animal'),
-        ExampleWord(word: 'Rose', meaning: 'A beautiful flower'),
+        ExampleWord(word: 'Rainbow', meaning: 'Colors in the sky', emoji: '🌈', sentence: 'The rainbow has many colors.'),
+        ExampleWord(word: 'Rabbit', meaning: 'A hopping animal', emoji: '🐰', sentence: 'The rabbit hops around.'),
+        ExampleWord(word: 'Rose', meaning: 'A beautiful flower', emoji: '🌹', sentence: 'The rose is red.'),
       ],
     ),
     Letter(
@@ -255,9 +261,9 @@ class EnglishAlphabetData {
       pronunciation: 'ess',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Sun', meaning: 'Gives us light'),
-        ExampleWord(word: 'Star', meaning: 'Twinkles at night'),
-        ExampleWord(word: 'Snake', meaning: 'A long reptile'),
+        ExampleWord(word: 'Sun', meaning: 'Gives us light', emoji: '☀️', sentence: 'The sun gives us light.'),
+        ExampleWord(word: 'Star', meaning: 'Twinkles at night', emoji: '⭐', sentence: 'The star twinkles at night.'),
+        ExampleWord(word: 'Snake', meaning: 'A long reptile', emoji: '🐍', sentence: 'The snake is very long.'),
       ],
     ),
     Letter(
@@ -266,9 +272,9 @@ class EnglishAlphabetData {
       pronunciation: 'tee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Tiger', meaning: 'A striped big cat'),
-        ExampleWord(word: 'Tree', meaning: 'A tall plant'),
-        ExampleWord(word: 'Train', meaning: 'Runs on tracks'),
+        ExampleWord(word: 'Tiger', meaning: 'A striped big cat', emoji: '🐯', sentence: 'The tiger has stripes.'),
+        ExampleWord(word: 'Tree', meaning: 'A tall plant', emoji: '🌳', sentence: 'The tree gives us shade.'),
+        ExampleWord(word: 'Train', meaning: 'Runs on tracks', emoji: '🚂', sentence: 'The train runs on tracks.'),
       ],
     ),
     Letter(
@@ -277,9 +283,9 @@ class EnglishAlphabetData {
       pronunciation: 'you',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'Umbrella', meaning: 'Keeps us dry'),
-        ExampleWord(word: 'Unicorn', meaning: 'A magical horse'),
-        ExampleWord(word: 'Uniform', meaning: 'School clothes'),
+        ExampleWord(word: 'Umbrella', meaning: 'Keeps us dry', emoji: '☂️', sentence: 'The umbrella keeps me dry.'),
+        ExampleWord(word: 'Unicorn', meaning: 'A magical horse', emoji: '🦄', sentence: 'The unicorn is magical.'),
+        ExampleWord(word: 'Uniform', meaning: 'School clothes', emoji: '👔', sentence: 'I wear uniform to school.'),
       ],
     ),
     Letter(
@@ -288,9 +294,9 @@ class EnglishAlphabetData {
       pronunciation: 'vee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Violin', meaning: 'A musical instrument'),
-        ExampleWord(word: 'Van', meaning: 'A big car'),
-        ExampleWord(word: 'Vegetable', meaning: 'Healthy food'),
+        ExampleWord(word: 'Violin', meaning: 'A musical instrument', emoji: '🎻', sentence: 'She plays the violin.'),
+        ExampleWord(word: 'Van', meaning: 'A big car', emoji: '🚐', sentence: 'The van carries things.'),
+        ExampleWord(word: 'Vegetable', meaning: 'Healthy food', emoji: '🥦', sentence: 'Vegetables are good for health.'),
       ],
     ),
     Letter(
@@ -299,9 +305,9 @@ class EnglishAlphabetData {
       pronunciation: 'double-you',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Water', meaning: 'We drink this'),
-        ExampleWord(word: 'Watch', meaning: 'Tells the time'),
-        ExampleWord(word: 'Whale', meaning: 'A big sea animal'),
+        ExampleWord(word: 'Water', meaning: 'We drink this', emoji: '💧', sentence: 'I drink water every day.'),
+        ExampleWord(word: 'Watch', meaning: 'Tells the time', emoji: '⌚', sentence: 'The watch tells the time.'),
+        ExampleWord(word: 'Whale', meaning: 'A big sea animal', emoji: '🐋', sentence: 'The whale is very big.'),
       ],
     ),
     Letter(
@@ -310,9 +316,9 @@ class EnglishAlphabetData {
       pronunciation: 'ex',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'X-ray', meaning: 'Sees inside body'),
-        ExampleWord(word: 'Xylophone', meaning: 'A musical toy'),
-        ExampleWord(word: 'Box', meaning: 'We put things in'),
+        ExampleWord(word: 'X-ray', meaning: 'Sees inside body', emoji: '🩻', sentence: 'The x-ray shows my bones.'),
+        ExampleWord(word: 'Xylophone', meaning: 'A musical toy', emoji: '🎵', sentence: 'I play the xylophone.'),
+        ExampleWord(word: 'Box', meaning: 'We put things in', emoji: '📦', sentence: 'I put toys in the box.'),
       ],
     ),
     Letter(
@@ -321,9 +327,9 @@ class EnglishAlphabetData {
       pronunciation: 'why',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Yellow', meaning: 'A bright color'),
-        ExampleWord(word: 'Yak', meaning: 'A hairy animal'),
-        ExampleWord(word: 'Yo-yo', meaning: 'A spinning toy'),
+        ExampleWord(word: 'Yellow', meaning: 'A bright color', emoji: '💛', sentence: 'Yellow is a bright color.'),
+        ExampleWord(word: 'Yak', meaning: 'A hairy animal', emoji: '🐂', sentence: 'The yak has long hair.'),
+        ExampleWord(word: 'Yo-yo', meaning: 'A spinning toy', emoji: '🪀', sentence: 'The yo-yo goes up and down.'),
       ],
     ),
     Letter(
@@ -332,9 +338,9 @@ class EnglishAlphabetData {
       pronunciation: 'zee',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'Zebra', meaning: 'A striped animal'),
-        ExampleWord(word: 'Zoo', meaning: 'Animals live here'),
-        ExampleWord(word: 'Zero', meaning: 'The number 0'),
+        ExampleWord(word: 'Zebra', meaning: 'A striped animal', emoji: '🦓', sentence: 'The zebra has black and white stripes.'),
+        ExampleWord(word: 'Zoo', meaning: 'Animals live here', emoji: '🦁', sentence: 'I see animals at the zoo.'),
+        ExampleWord(word: 'Zero', meaning: 'The number 0', emoji: '0️⃣', sentence: 'Zero means nothing.'),
       ],
     ),
   ];
@@ -343,15 +349,14 @@ class EnglishAlphabetData {
 // Bangla Alphabet Data
 class BanglaAlphabetData {
   static final List<Letter> swarabarna = [
-    // Vowels (স্বরবর্ণ)
     Letter(
       id: 'অ',
       letter: 'অ',
       pronunciation: 'শ্বরেঅ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'অজগর', meaning: 'Python'),
-        ExampleWord(word: 'অনেক', meaning: 'Many'),
+        ExampleWord(word: 'অজগর', meaning: 'Python', emoji: '🐍', sentence: 'অজগর অনেক লম্বা সাপ।'),
+        ExampleWord(word: 'অনেক', meaning: 'Many', emoji: '🌟', sentence: 'আকাশে অনেক তারা আছে।'),
       ],
     ),
     Letter(
@@ -360,8 +365,8 @@ class BanglaAlphabetData {
       pronunciation: 'শ্বরেআ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'আম', meaning: 'Mango'),
-        ExampleWord(word: 'আকাশ', meaning: 'Sky'),
+        ExampleWord(word: 'আম', meaning: 'Mango', emoji: '🥭', sentence: 'আম খেতে খুব মিষ্টি।'),
+        ExampleWord(word: 'আকাশ', meaning: 'Sky', emoji: '🌤️', sentence: 'আকাশ নীল রঙের।'),
       ],
     ),
     Letter(
@@ -370,8 +375,8 @@ class BanglaAlphabetData {
       pronunciation: 'রশইই',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ইলিশ', meaning: 'Hilsa fish'),
-        ExampleWord(word: 'ইট', meaning: 'Brick'),
+        ExampleWord(word: 'ইলিশ', meaning: 'Hilsa fish', emoji: '🐟', sentence: 'ইলিশ মাছ খুব সুস্বাদু।'),
+        ExampleWord(word: 'ইট', meaning: 'Brick', emoji: '🧱', sentence: 'ইট দিয়ে ঘর তৈরি হয়।'),
       ],
     ),
     Letter(
@@ -380,8 +385,8 @@ class BanglaAlphabetData {
       pronunciation: 'দীর্ঘ ঈ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ঈগল', meaning: 'Eagle'),
-        ExampleWord(word: 'ঈদ', meaning: 'Eid'),
+        ExampleWord(word: 'ঈগল', meaning: 'Eagle', emoji: '🦅', sentence: 'ঈগল অনেক উঁচুতে ওড়ে।'),
+        ExampleWord(word: 'ঈদ', meaning: 'Eid', emoji: '🌙', sentence: 'ঈদে আমরা সবাই খুশি।'),
       ],
     ),
     Letter(
@@ -390,8 +395,8 @@ class BanglaAlphabetData {
       pronunciation: 'রশশউ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'উট', meaning: 'Camel'),
-        ExampleWord(word: 'উড়ি', meaning: 'Fly'),
+        ExampleWord(word: 'উট', meaning: 'Camel', emoji: '🐫', sentence: 'উট মরুভূমিতে চলে।'),
+        ExampleWord(word: 'উড়ি', meaning: 'Fly', emoji: '🕊️', sentence: 'পাখি আকাশে উড়ি দেয়।'),
       ],
     ),
     Letter(
@@ -400,8 +405,8 @@ class BanglaAlphabetData {
       pronunciation: 'দীর্ঘ ঊ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ঊনিশ', meaning: 'Nineteen'),
-        ExampleWord(word: 'ঊষা', meaning: 'Dawn'),
+        ExampleWord(word: 'ঊনিশ', meaning: 'Nineteen', emoji: '🔢', sentence: 'ঊনিশ একটি সংখ্যা।'),
+        ExampleWord(word: 'ঊষা', meaning: 'Dawn', emoji: '🌅', sentence: 'ঊষার আলো খুব সুন্দর।'),
       ],
     ),
     Letter(
@@ -410,8 +415,8 @@ class BanglaAlphabetData {
       pronunciation: 'ঋ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ঋতু', meaning: 'Season'),
-        ExampleWord(word: 'ঋষি', meaning: 'Sage'),
+        ExampleWord(word: 'ঋতু', meaning: 'Season', emoji: '🍂', sentence: 'বাংলাদেশে ছয়টি ঋতু আছে।'),
+        ExampleWord(word: 'ঋষি', meaning: 'Sage', emoji: '🧘', sentence: 'ঋষি ধ্যান করেন।'),
       ],
     ),
     Letter(
@@ -420,8 +425,8 @@ class BanglaAlphabetData {
       pronunciation: 'a',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'একতা', meaning: 'Unity'),
-        ExampleWord(word: 'এখন', meaning: 'Now'),
+        ExampleWord(word: 'একতা', meaning: 'Unity', emoji: '🤝', sentence: 'একতাতেই শক্তি।'),
+        ExampleWord(word: 'এখন', meaning: 'Now', emoji: '⏰', sentence: 'এখন পড়ার সময়।'),
       ],
     ),
     Letter(
@@ -430,7 +435,7 @@ class BanglaAlphabetData {
       pronunciation: 'ঐ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ঐক্য', meaning: 'Harmony'),
+        ExampleWord(word: 'ঐক্য', meaning: 'Harmony', emoji: '🕊️', sentence: 'ঐক্যে অনেক শক্তি।'),
       ],
     ),
     Letter(
@@ -439,8 +444,8 @@ class BanglaAlphabetData {
       pronunciation: 'ও_ও',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ওল', meaning: 'Yam'),
-        ExampleWord(word: 'ওড়না', meaning: 'Scarf'),
+        ExampleWord(word: 'ওল', meaning: 'Yam', emoji: '🥔', sentence: 'ওল একটি সবজি।'),
+        ExampleWord(word: 'ওড়না', meaning: 'Scarf', emoji: '🧣', sentence: 'মেয়েটি ওড়না পরে।'),
       ],
     ),
     Letter(
@@ -449,21 +454,20 @@ class BanglaAlphabetData {
       pronunciation: 'ঔ',
       type: 'vowel',
       examples: [
-        ExampleWord(word: 'ঔষধ', meaning: 'Medicine'),
+        ExampleWord(word: 'ঔষধ', meaning: 'Medicine', emoji: '💊', sentence: 'অসুখ হলে ঔষধ খাই।'),
       ],
     ),
   ];
 
   static final List<Letter> byanjanbarna = [
-    // Consonants (ব্যঞ্জনবর্ণ)
     Letter(
       id: 'ক',
       letter: 'ক',
       pronunciation: 'ক',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'কলম', meaning: 'Pen'),
-        ExampleWord(word: 'কাক', meaning: 'Crow'),
+        ExampleWord(word: 'কলম', meaning: 'Pen', emoji: '🖊️', sentence: 'আমি কলম দিয়ে লিখি।'),
+        ExampleWord(word: 'কাক', meaning: 'Crow', emoji: '🐦‍⬛', sentence: 'কাক কা কা করে ডাকে।'),
       ],
     ),
     Letter(
@@ -472,8 +476,8 @@ class BanglaAlphabetData {
       pronunciation: 'খ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'খরগোশ', meaning: 'Rabbit'),
-        ExampleWord(word: 'খাবার', meaning: 'Food'),
+        ExampleWord(word: 'খরগোশ', meaning: 'Rabbit', emoji: '🐰', sentence: 'খরগোশ লাফিয়ে চলে।'),
+        ExampleWord(word: 'খাবার', meaning: 'Food', emoji: '🍛', sentence: 'মা সুন্দর খাবার রান্না করেন।'),
       ],
     ),
     Letter(
@@ -482,8 +486,8 @@ class BanglaAlphabetData {
       pronunciation: 'গ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'গরু', meaning: 'Cow'),
-        ExampleWord(word: 'গাছ', meaning: 'Tree'),
+        ExampleWord(word: 'গরু', meaning: 'Cow', emoji: '🐄', sentence: 'গরু আমাদের দুধ দেয়।'),
+        ExampleWord(word: 'গাছ', meaning: 'Tree', emoji: '🌳', sentence: 'গাছ আমাদের ফল দেয়।'),
       ],
     ),
     Letter(
@@ -492,8 +496,8 @@ class BanglaAlphabetData {
       pronunciation: 'ঘ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ঘড়ি', meaning: 'Clock'),
-        ExampleWord(word: 'ঘোড়া', meaning: 'Horse'),
+        ExampleWord(word: 'ঘড়ি', meaning: 'Clock', emoji: '🕐', sentence: 'ঘড়ি দেখে সময় জানি।'),
+        ExampleWord(word: 'ঘোড়া', meaning: 'Horse', emoji: '🐴', sentence: 'ঘোড়া খুব দ্রুত দৌড়ায়।'),
       ],
     ),
     Letter(
@@ -502,7 +506,7 @@ class BanglaAlphabetData {
       pronunciation: 'ঙ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'বাঙালি', meaning: 'Bengali'),
+        ExampleWord(word: 'বাঙালি', meaning: 'Bengali', emoji: '🇧🇩', sentence: 'আমরা বাঙালি জাতি।'),
       ],
     ),
     Letter(
@@ -511,8 +515,8 @@ class BanglaAlphabetData {
       pronunciation: 'চ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'চাঁদ', meaning: 'Moon'),
-        ExampleWord(word: 'চোখ', meaning: 'Eye'),
+        ExampleWord(word: 'চাঁদ', meaning: 'Moon', emoji: '🌙', sentence: 'রাতে চাঁদ আলো দেয়।'),
+        ExampleWord(word: 'চোখ', meaning: 'Eye', emoji: '👁️', sentence: 'চোখ দিয়ে আমরা দেখি।'),
       ],
     ),
     Letter(
@@ -521,8 +525,8 @@ class BanglaAlphabetData {
       pronunciation: 'ছ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ছবি', meaning: 'Picture'),
-        ExampleWord(word: 'ছাতা', meaning: 'Umbrella'),
+        ExampleWord(word: 'ছবি', meaning: 'Picture', emoji: '🖼️', sentence: 'আমি সুন্দর ছবি আঁকি।'),
+        ExampleWord(word: 'ছাতা', meaning: 'Umbrella', emoji: '☂️', sentence: 'বৃষ্টিতে ছাতা ব্যবহার করি।'),
       ],
     ),
     Letter(
@@ -531,8 +535,8 @@ class BanglaAlphabetData {
       pronunciation: 'জ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'জল', meaning: 'Water'),
-        ExampleWord(word: 'জামা', meaning: 'Shirt'),
+        ExampleWord(word: 'জল', meaning: 'Water', emoji: '💧', sentence: 'জল পান করা স্বাস্থ্যকর।'),
+        ExampleWord(word: 'জামা', meaning: 'Shirt', emoji: '👕', sentence: 'আমি নতুন জামা পরি।'),
       ],
     ),
     Letter(
@@ -541,7 +545,7 @@ class BanglaAlphabetData {
       pronunciation: 'ঝ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ঝরনা', meaning: 'Waterfall'),
+        ExampleWord(word: 'ঝরনা', meaning: 'Waterfall', emoji: '🏞️', sentence: 'ঝরনা থেকে জল পড়ে।'),
       ],
     ),
     Letter(
@@ -550,8 +554,8 @@ class BanglaAlphabetData {
       pronunciation: 'ট',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'টমেটো', meaning: 'Tomato'),
-        ExampleWord(word: 'টাকা', meaning: 'Money'),
+        ExampleWord(word: 'টমেটো', meaning: 'Tomato', emoji: '🍅', sentence: 'টমেটো লাল রঙের।'),
+        ExampleWord(word: 'টাকা', meaning: 'Money', emoji: '💰', sentence: 'জিনিস কিনতে টাকা লাগে।'),
       ],
     ),
     Letter(
@@ -560,7 +564,7 @@ class BanglaAlphabetData {
       pronunciation: 'ঠ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ঠোঁট', meaning: 'Lips'),
+        ExampleWord(word: 'ঠোঁট', meaning: 'Lips', emoji: '👄', sentence: 'ঠোঁট দিয়ে আমরা কথা বলি।'),
       ],
     ),
     Letter(
@@ -569,8 +573,8 @@ class BanglaAlphabetData {
       pronunciation: 'ড',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ডাল', meaning: 'Lentils'),
-        ExampleWord(word: 'ডিম', meaning: 'Egg'),
+        ExampleWord(word: 'ডাল', meaning: 'Lentils', emoji: '🥣', sentence: 'ভাতের সাথে ডাল খাই।'),
+        ExampleWord(word: 'ডিম', meaning: 'Egg', emoji: '🥚', sentence: 'সকালে ডিম খাই।'),
       ],
     ),
     Letter(
@@ -579,7 +583,7 @@ class BanglaAlphabetData {
       pronunciation: 'ঢ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ঢোল', meaning: 'Drum'),
+        ExampleWord(word: 'ঢোল', meaning: 'Drum', emoji: '🥁', sentence: 'উৎসবে ঢোল বাজে।'),
       ],
     ),
     Letter(
@@ -588,7 +592,7 @@ class BanglaAlphabetData {
       pronunciation: 'ণ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'রামায়ণ', meaning: 'Ramayana'),
+        ExampleWord(word: 'রামায়ণ', meaning: 'Ramayana', emoji: '📖', sentence: 'রামায়ণ একটি মহাকাব্য।'),
       ],
     ),
     Letter(
@@ -597,8 +601,8 @@ class BanglaAlphabetData {
       pronunciation: 'ত',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'তারা', meaning: 'Star'),
-        ExampleWord(word: 'তবলা', meaning: 'Tabla'),
+        ExampleWord(word: 'তারা', meaning: 'Star', emoji: '⭐', sentence: 'রাতে আকাশে তারা জ্বলে।'),
+        ExampleWord(word: 'তবলা', meaning: 'Tabla', emoji: '🪘', sentence: 'তবলা একটি বাদ্যযন্ত্র।'),
       ],
     ),
     Letter(
@@ -607,7 +611,7 @@ class BanglaAlphabetData {
       pronunciation: 'থ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'থালা', meaning: 'Plate'),
+        ExampleWord(word: 'থালা', meaning: 'Plate', emoji: '🍽️', sentence: 'থালায় ভাত দাও।'),
       ],
     ),
     Letter(
@@ -616,8 +620,8 @@ class BanglaAlphabetData {
       pronunciation: 'দ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'দই', meaning: 'Yogurt'),
-        ExampleWord(word: 'দরজা', meaning: 'Door'),
+        ExampleWord(word: 'দই', meaning: 'Yogurt', emoji: '🥛', sentence: 'দই খেতে টক লাগে।'),
+        ExampleWord(word: 'দরজা', meaning: 'Door', emoji: '🚪', sentence: 'দরজা বন্ধ করো।'),
       ],
     ),
     Letter(
@@ -626,7 +630,7 @@ class BanglaAlphabetData {
       pronunciation: 'ধ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ধান', meaning: 'Rice plant'),
+        ExampleWord(word: 'ধান', meaning: 'Rice plant', emoji: '🌾', sentence: 'মাঠে ধান ফলে।'),
       ],
     ),
     Letter(
@@ -635,8 +639,8 @@ class BanglaAlphabetData {
       pronunciation: 'ন',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'নদী', meaning: 'River'),
-        ExampleWord(word: 'নাক', meaning: 'Nose'),
+        ExampleWord(word: 'নদী', meaning: 'River', emoji: '🏞️', sentence: 'নদীতে নৌকা চলে।'),
+        ExampleWord(word: 'নাক', meaning: 'Nose', emoji: '👃', sentence: 'নাক দিয়ে গন্ধ পাই।'),
       ],
     ),
     Letter(
@@ -645,8 +649,8 @@ class BanglaAlphabetData {
       pronunciation: 'প',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'পাখি', meaning: 'Bird'),
-        ExampleWord(word: 'পানি', meaning: 'Water'),
+        ExampleWord(word: 'পাখি', meaning: 'Bird', emoji: '🐦', sentence: 'পাখি গান গায়।'),
+        ExampleWord(word: 'পানি', meaning: 'Water', emoji: '💧', sentence: 'পানি পান করো।'),
       ],
     ),
     Letter(
@@ -655,8 +659,8 @@ class BanglaAlphabetData {
       pronunciation: 'ফ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ফুল', meaning: 'Flower'),
-        ExampleWord(word: 'ফল', meaning: 'Fruit'),
+        ExampleWord(word: 'ফুল', meaning: 'Flower', emoji: '🌸', sentence: 'ফুল সুন্দর গন্ধ দেয়।'),
+        ExampleWord(word: 'ফল', meaning: 'Fruit', emoji: '🍎', sentence: 'ফল খাওয়া স্বাস্থ্যকর।'),
       ],
     ),
     Letter(
@@ -665,8 +669,8 @@ class BanglaAlphabetData {
       pronunciation: 'ব',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'বই', meaning: 'Book'),
-        ExampleWord(word: 'বাঘ', meaning: 'Tiger'),
+        ExampleWord(word: 'বই', meaning: 'Book', emoji: '📚', sentence: 'আমি বই পড়তে ভালোবাসি।'),
+        ExampleWord(word: 'বাঘ', meaning: 'Tiger', emoji: '🐯', sentence: 'বাঘ বনে থাকে।'),
       ],
     ),
     Letter(
@@ -675,7 +679,7 @@ class BanglaAlphabetData {
       pronunciation: 'ভ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ভালুক', meaning: 'Bear'),
+        ExampleWord(word: 'ভালুক', meaning: 'Bear', emoji: '🐻', sentence: 'ভালুক মধু খায়।'),
       ],
     ),
     Letter(
@@ -684,8 +688,8 @@ class BanglaAlphabetData {
       pronunciation: 'ম',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'মাছ', meaning: 'Fish'),
-        ExampleWord(word: 'মা', meaning: 'Mother'),
+        ExampleWord(word: 'মাছ', meaning: 'Fish', emoji: '🐟', sentence: 'মাছ পানিতে সাঁতার কাটে।'),
+        ExampleWord(word: 'মা', meaning: 'Mother', emoji: '👩', sentence: 'মা আমাকে ভালোবাসেন।'),
       ],
     ),
     Letter(
@@ -694,7 +698,7 @@ class BanglaAlphabetData {
       pronunciation: 'য',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'যাত্রা', meaning: 'Journey'),
+        ExampleWord(word: 'যাত্রা', meaning: 'Journey', emoji: '🚶', sentence: 'আমরা যাত্রা শুরু করি।'),
       ],
     ),
     Letter(
@@ -703,8 +707,8 @@ class BanglaAlphabetData {
       pronunciation: 'র',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'রাজা', meaning: 'King'),
-        ExampleWord(word: 'রং', meaning: 'Color'),
+        ExampleWord(word: 'রাজা', meaning: 'King', emoji: '👑', sentence: 'রাজা মুকুট পরেন।'),
+        ExampleWord(word: 'রং', meaning: 'Color', emoji: '🎨', sentence: 'আমি রং দিয়ে ছবি আঁকি।'),
       ],
     ),
     Letter(
@@ -713,8 +717,8 @@ class BanglaAlphabetData {
       pronunciation: 'ল',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'লাল', meaning: 'Red'),
-        ExampleWord(word: 'লেবু', meaning: 'Lemon'),
+        ExampleWord(word: 'লাল', meaning: 'Red', emoji: '🔴', sentence: 'গোলাপ ফুল লাল।'),
+        ExampleWord(word: 'লেবু', meaning: 'Lemon', emoji: '🍋', sentence: 'লেবু টক হয়।'),
       ],
     ),
     Letter(
@@ -723,7 +727,7 @@ class BanglaAlphabetData {
       pronunciation: 'শ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'শিশু', meaning: 'Child'),
+        ExampleWord(word: 'শিশু', meaning: 'Child', emoji: '👶', sentence: 'শিশু হাসতে ভালোবাসে।'),
       ],
     ),
     Letter(
@@ -732,7 +736,7 @@ class BanglaAlphabetData {
       pronunciation: 'ষ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'ষাঁড়', meaning: 'Bull'),
+        ExampleWord(word: 'ষাঁড়', meaning: 'Bull', emoji: '🐂', sentence: 'ষাঁড় অনেক শক্তিশালী।'),
       ],
     ),
     Letter(
@@ -741,8 +745,8 @@ class BanglaAlphabetData {
       pronunciation: 'স',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'সূর্য', meaning: 'Sun'),
-        ExampleWord(word: 'সাপ', meaning: 'Snake'),
+        ExampleWord(word: 'সূর্য', meaning: 'Sun', emoji: '☀️', sentence: 'সূর্য আলো দেয়।'),
+        ExampleWord(word: 'সাপ', meaning: 'Snake', emoji: '🐍', sentence: 'সাপ ঘাসে লুকিয়ে থাকে।'),
       ],
     ),
     Letter(
@@ -751,8 +755,8 @@ class BanglaAlphabetData {
       pronunciation: 'হ',
       type: 'consonant',
       examples: [
-        ExampleWord(word: 'হাতি', meaning: 'Elephant'),
-        ExampleWord(word: 'হাত', meaning: 'Hand'),
+        ExampleWord(word: 'হাতি', meaning: 'Elephant', emoji: '🐘', sentence: 'হাতি অনেক বড়।'),
+        ExampleWord(word: 'হাত', meaning: 'Hand', emoji: '✋', sentence: 'আমরা হাত দিয়ে কাজ করি।'),
       ],
     ),
   ];
