@@ -30,8 +30,10 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
   SpellingWord? _currentWord;
   bool _isLoading = false;
   bool _isListening = false;
+  bool _speechInitialized = false;
   String _currentHint = '';
   int _hintLevel = 0;
+  Timer? _listeningTimeoutTimer;
 
   // Animations
   late AnimationController _beeController;
@@ -42,7 +44,15 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
   void initState() {
     super.initState();
     _initializeAnimations();
+    _initSpeechRecognition();
     _startGame();
+  }
+
+  Future<void> _initSpeechRecognition() async {
+    final initialized = await _speechService.initializeSpeechRecognition();
+    if (mounted) {
+      setState(() => _speechInitialized = initialized);
+    }
   }
 
   void _initializeAnimations() {
@@ -64,6 +74,10 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
 
   @override
   void dispose() {
+    _listeningTimeoutTimer?.cancel();
+    if (_isListening) {
+      _speechService.stopListening();
+    }
     _beeController.dispose();
     _celebrationController.dispose();
     _inputController.dispose();
@@ -398,34 +412,112 @@ class _SpellingBeeScreenState extends ConsumerState<SpellingBeeScreen>
 
   Future<void> _startVoiceInput() async {
     final isBangla = ref.read(languageProvider) == AppLanguage.bangla;
-    
+
+    // Stop TTS if it's still speaking the word to avoid audio conflict
+    if (_speechService.isSpeaking) {
+      await _speechService.stop();
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
+    // Check if speech recognition is available
+    if (!_speechInitialized) {
+      // Try to reinitialize once
+      final reinitialized = await _speechService.reinitializeSpeechRecognition();
+      if (!reinitialized) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isBangla
+                    ? 'মাইক্রোফোন চালু করতে পারিনি। আবার চেষ্টা করো!'
+                    : 'Speech recognition not available. Please check microphone permissions.',
+              ),
+            ),
+          );
+        }
+        return;
+      }
+      setState(() => _speechInitialized = true);
+    }
+
     setState(() => _isListening = true);
 
     final success = await _speechService.startListening(
       onResult: (text) {
+        if (!mounted) return;
         setState(() {
           _inputController.text = text;
         });
+        // Auto-stop after receiving a non-empty result
+        if (text.trim().isNotEmpty) {
+          _stopVoiceInput();
+        }
       },
       isBangla: isBangla,
       listenFor: const Duration(seconds: 10),
       pauseFor: const Duration(seconds: 3),
       onError: (error) {
+        if (!mounted) return;
+        _listeningTimeoutTimer?.cancel();
         setState(() => _isListening = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Voice input error: $error')),
+          SnackBar(content: Text(
+            isBangla
+                ? 'ভয়েস ইনপুটে সমস্যা হয়েছে। আবার চেষ্টা করো!'
+                : 'Voice input error. Please try again!',
+          )),
         );
       },
     );
 
     if (!success) {
-      setState(() => _isListening = false);
+      // Retry once with reinitialization
+      final reinitialized = await _speechService.reinitializeSpeechRecognition();
+      if (reinitialized) {
+        final retrySuccess = await _speechService.startListening(
+          onResult: (text) {
+            if (!mounted) return;
+            setState(() {
+              _inputController.text = text;
+            });
+            if (text.trim().isNotEmpty) {
+              _stopVoiceInput();
+            }
+          },
+          isBangla: isBangla,
+          listenFor: const Duration(seconds: 10),
+          pauseFor: const Duration(seconds: 3),
+          onError: (error) {
+            if (!mounted) return;
+            _listeningTimeoutTimer?.cancel();
+            setState(() => _isListening = false);
+          },
+        );
+        if (!retrySuccess && mounted) {
+          setState(() => _isListening = false);
+        }
+      } else if (mounted) {
+        setState(() => _isListening = false);
+      }
+    }
+
+    // Safety timer: ensure _isListening resets even if STT ends without notifying us
+    if (_isListening) {
+      _listeningTimeoutTimer?.cancel();
+      _listeningTimeoutTimer = Timer(const Duration(seconds: 12), () {
+        if (mounted && _isListening) {
+          _stopVoiceInput();
+        }
+      });
     }
   }
 
   void _stopVoiceInput() {
+    _listeningTimeoutTimer?.cancel();
     _speechService.stopListening();
-    setState(() => _isListening = false);
+    if (mounted) {
+      setState(() => _isListening = false);
+    }
   }
 
   @override

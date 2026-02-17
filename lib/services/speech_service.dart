@@ -208,7 +208,7 @@ class SpeechService {
         pauseFor: pauseFor ?? const Duration(seconds: 3),
         listenOptions: stt.SpeechListenOptions(
           cancelOnError: false,
-          listenMode: stt.ListenMode.confirmation,
+          listenMode: stt.ListenMode.dictation,
         ),
       );
       return true;
