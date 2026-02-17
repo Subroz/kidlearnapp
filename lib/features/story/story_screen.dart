@@ -204,7 +204,7 @@ class _WordSelector extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Icon(
+                      const Icon(
                         Icons.swap_horiz_rounded,
                         size: 16,
                         color: AppTheme.textSecondary,
